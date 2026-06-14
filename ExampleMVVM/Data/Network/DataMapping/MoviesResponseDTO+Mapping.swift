@@ -18,10 +18,14 @@ extension MoviesResponseDTO {
         private enum CodingKeys: String, CodingKey {
             case id
             case title
+            case name
             case genre
+            case genreIds = "genre_ids"
             case posterPath = "poster_path"
+            case rating = "vote_average"
             case overview
             case releaseDate = "release_date"
+            case mediaType = "media_type"
         }
         enum GenreDTO: String, Decodable {
             case adventure
@@ -29,10 +33,16 @@ extension MoviesResponseDTO {
         }
         let id: Int
         let title: String?
+        let name: String?
         let genre: GenreDTO?
+        let genreIds: [Int]?
         let posterPath: String?
+
+        let rating: Double?
         let overview: String?
         let releaseDate: String?
+        let mediaType: String?
+
     }
 }
 
@@ -49,11 +59,16 @@ extension MoviesResponseDTO {
 extension MoviesResponseDTO.MovieDTO {
     func toDomain() -> Movie {
         return .init(id: Movie.Identifier(id),
-                     title: title,
+                     title: title ?? name,
                      genre: genre?.toDomain(),
+                     genreIds: genreIds ?? [],
                      posterPath: posterPath,
+
+                     rating: rating,
                      overview: overview,
-                     releaseDate: dateFormatter.date(from: releaseDate ?? ""))
+                     releaseDate: dateFormatter.date(from: releaseDate ?? ""),
+                     mediaType: mediaType
+                     )
     }
 }
 
