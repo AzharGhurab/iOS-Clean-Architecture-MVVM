@@ -27,7 +27,7 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     }
     func makeFetchGenresUseCase() -> FetchGenresUseCase {
         DefaultFetchGenresUseCase(
-            genresRepository: makeGenresRepository()
+            genresRepository: makeGenresRepository())
         }
     func makeMoviesHomeFlowCoordinator(navigationController: UINavigationController) -> MoviesHomeFlowCoordinator {
         MoviesHomeFlowCoordinator(
