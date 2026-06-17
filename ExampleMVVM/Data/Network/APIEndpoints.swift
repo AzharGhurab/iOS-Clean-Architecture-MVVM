@@ -71,5 +71,35 @@ struct APIEndpoints {
                 method: .get
             )
         }
+    // MARK: - Authentication
+    
+    static func createGuestSession() -> Endpoint<GuestSessionResponseDTO> {
+        return Endpoint(
+            path: "3/authentication/guest_session/new",
+            method: .get
+        )
     }
+    
+    static func createRequestToken() -> Endpoint<RequestTokenResponseDTO> {
+        return Endpoint(
+            path: "3/authentication/token/new",
+            method: .get
+        )
+    }
+    
+    static func createSession(requestToken: String) -> Endpoint<SessionResponseDTO> {
+        return Endpoint(
+            path: "3/authentication/session/new",
+            method: .post,
+            headerParameters: [
+                "Content-Type": "application/json;charset=utf-8"
+            ],
+            bodyParameters: [
+                "request_token": requestToken
+            ],
+            bodyEncoder: JSONBodyEncoder()
+        )
+    }
+}
+
 

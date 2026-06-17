@@ -33,10 +33,14 @@ struct RequestTokenResponseDTO: Decodable {
 
 struct SessionResponseDTO: Decodable {
     let success: Bool
-    let sessionId: String
+    let sessionId: String?
+    let statusCode: Int?
+    let statusMessage: String?
 
     enum CodingKeys: String, CodingKey {
         case success
         case sessionId = "session_id"
+        case statusCode = "status_code"
+        case statusMessage = "status_message"
     }
 }

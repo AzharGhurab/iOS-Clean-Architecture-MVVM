@@ -39,7 +39,40 @@ final class AppFlowCoordinator {
             navigationController: searchNavigationController
         )
         flow.start()
-        let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
+        let profileNavigationController = UINavigationController()
+
+        var loginViewModel: LoginViewModel?
+
+        loginViewModel = moviesSceneDIContainer.makeLoginViewModel(
+            actions: LoginViewModelActions(
+                showProfile: {
+                    let profileViewController = ProfileViewController()
+                    profileNavigationController.setViewControllers(
+                        [profileViewController],
+                        animated: true
+                    )
+                },
+                showAuthorize: { requestToken in
+                    let authorizeViewController = AuthorizeViewController.create(
+                        requestToken: requestToken,
+                        onAuthorizationCompleted: { requestToken in
+                            loginViewModel?.createSession(requestToken: requestToken)
+                        }
+                    )
+
+                    profileNavigationController.pushViewController(
+                        authorizeViewController,
+                        animated: true
+                    )
+                }
+            )
+        )
+
+        profileNavigationController.setViewControllers(
+            [LoginViewController.create(with: loginViewModel!)],
+            animated: false
+        )
+
         profileNavigationController.tabBarItem = UITabBarItem(
             title: "Profile",
             image: UIImage(named: "person"),
