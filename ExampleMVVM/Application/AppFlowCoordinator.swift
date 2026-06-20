@@ -4,6 +4,7 @@ final class AppFlowCoordinator {
     
     var navigationController: UINavigationController
     private let appDIContainer: AppDIContainer
+    private var authFlow: AuthFlowCoordinator?
     
     init(
         navigationController: UINavigationController,

@@ -90,12 +90,15 @@ extension DefaultAuthenticationRepository: AuthenticationRepository {
                 if let sessionId = responseDTO.sessionId {
                     completion(.success(sessionId))
                 } else {
-                    let message = responseDTO.statusMessage ?? "Failed to create session"
-                    completion(.failure(NSError(
-                        domain: "Authentication",
+                    let error = NSError(
+                        domain: "TMDB",
                         code: responseDTO.statusCode ?? 0,
-                        userInfo: [NSLocalizedDescriptionKey: message]
-                    )))
+                        userInfo: [
+                            NSLocalizedDescriptionKey:
+                                "Unable to complete sign in. Please try again."
+                        ]
+                    )
+                    completion(.failure(error))
                 }
 
             case .failure(let error):

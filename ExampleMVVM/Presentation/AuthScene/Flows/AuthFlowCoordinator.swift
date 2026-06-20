@@ -23,6 +23,13 @@ final class AuthFlowCoordinator {
     }
 
     func start() {
+        if dependencies.authenticationStorage.sessionId() != nil {
+            showProfile()
+        } else {
+            showLogin()
+        }
+    }
+    private func showLogin() {
         let actions = LoginViewModelActions(
             showProfile: { [weak self] in
                 self?.showProfile()
