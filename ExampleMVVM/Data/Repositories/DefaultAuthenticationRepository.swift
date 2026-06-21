@@ -95,7 +95,7 @@ extension DefaultAuthenticationRepository: AuthenticationRepository {
                         code: responseDTO.statusCode ?? 0,
                         userInfo: [
                             NSLocalizedDescriptionKey:
-                                "Unable to complete sign in. Please try again."
+                                "Authorization was cancelled. Please approve access in TMDB to continue."
                         ]
                     )
                     completion(.failure(error))
