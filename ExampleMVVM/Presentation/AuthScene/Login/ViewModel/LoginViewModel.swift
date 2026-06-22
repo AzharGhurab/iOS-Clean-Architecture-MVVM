@@ -20,6 +20,7 @@ protocol LoginViewModelInput {
 
 protocol LoginViewModelOutput {
     var error: Observable<String?> { get }
+    var authenticationState: Observable<AuthenticationState?> { get }
 }
 
 protocol LoginViewModel: LoginViewModelInput, LoginViewModelOutput { }
@@ -27,6 +28,7 @@ protocol LoginViewModel: LoginViewModelInput, LoginViewModelOutput { }
 final class DefaultLoginViewModel: LoginViewModel {
 
     let error: Observable<String?> = Observable(nil)
+    let authenticationState: Observable<AuthenticationState?> = Observable(nil)
 
     private let createGuestSessionUseCase: CreateGuestSessionUseCase
     private let createRequestTokenUseCase: CreateRequestTokenUseCase
@@ -58,9 +60,13 @@ final class DefaultLoginViewModel: LoginViewModel {
                 switch result {
                 case .success(let guestSessionId):
                     self?.authenticationStorage.save(guestSessionId: guestSessionId)
+                    self?.authenticationState.value = .guest(guestSessionId: guestSessionId)
                     self?.actions?.showProfile()
 
                 case .failure(let error):
+                    self?.authenticationState.value = .failed(
+                        message: error.localizedDescription
+                    )
                     self?.error.value = error.localizedDescription
                 }
             }
@@ -75,6 +81,9 @@ final class DefaultLoginViewModel: LoginViewModel {
                     self?.actions?.showAuthorize(requestToken)
 
                 case .failure(let error):
+                    self?.authenticationState.value = .failed(
+                        message: error.localizedDescription
+                    )
                     self?.error.value = error.localizedDescription
                 }
             }
@@ -88,9 +97,13 @@ final class DefaultLoginViewModel: LoginViewModel {
                 switch result {
                 case .success(let sessionId):
                     self?.authenticationStorage.save(sessionId: sessionId)
+                    self?.authenticationState.value = .loggedIn(sessionId: sessionId)
                     self?.actions?.showProfile()
 
                 case .failure(let error):
+                    self?.authenticationState.value = .failed(
+                        message: error.localizedDescription
+                    )
                     self?.error.value = error.localizedDescription
                 }
             }
