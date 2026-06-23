@@ -3,7 +3,8 @@ import UIKit
 final class AppFlowCoordinator {
     
     var navigationController: UINavigationController
-    private let appDIContainer: AppDIContainer    
+    private let appDIContainer: AppDIContainer
+    private var authFlow: AuthFlowCoordinator?
     init(
         navigationController: UINavigationController,
         appDIContainer: AppDIContainer
@@ -38,40 +39,12 @@ final class AppFlowCoordinator {
             navigationController: searchNavigationController
         )
         flow.start()
-        let profileNavigationController = UINavigationController()
-
-        var loginViewModel: LoginViewModel?
-
-        loginViewModel = moviesSceneDIContainer.makeLoginViewModel(
-            actions: LoginViewModelActions(
-                showProfile: {
-                    let profileViewController = ProfileViewController()
-                    profileNavigationController.setViewControllers(
-                        [profileViewController],
-                        animated: true
-                    )
-                },
-                showAuthorize: { requestToken in
-                    let authorizeViewController = AuthorizeViewController.create(
-                        requestToken: requestToken,
-                        onAuthorizationCompleted: { requestToken in
-                            loginViewModel?.createSession(requestToken: requestToken)
-                        }
-                    )
-
-                    profileNavigationController.pushViewController(
-                        authorizeViewController,
-                        animated: true
-                    )
-                }
-            )
+        let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
+        authFlow = AuthFlowCoordinator(
+            navigationController: profileNavigationController,
+            dependencies: moviesSceneDIContainer
         )
-
-        profileNavigationController.setViewControllers(
-            [LoginViewController.create(with: loginViewModel!)],
-            animated: false
-        )
-
+        authFlow?.start()
         profileNavigationController.tabBarItem = UITabBarItem(
             title: "Profile",
             image: UIImage(named: "person"),
