@@ -15,6 +15,12 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
     lazy var authenticationStorage: AuthenticationStorage = UserDefaultsAuthenticationStorage()
+    lazy var authenticationRepository: AuthenticationRepository =
+        DefaultAuthenticationRepository(
+            dataTransferService: dependencies.apiDataTransferService,
+            storage: authenticationStorage
+        )
+    
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
@@ -23,18 +29,18 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
 
     func makeCreateGuestSessionUseCase() -> CreateGuestSessionUseCase {
         DefaultCreateGuestSessionUseCase(
-            authenticationRepository: makeAuthenticationRepository()
+            authenticationRepository: authenticationRepository
         )
     }
 
     func makeCreateRequestTokenUseCase() -> CreateRequestTokenUseCase {
         DefaultCreateRequestTokenUseCase(
-            authenticationRepository: makeAuthenticationRepository()
+            authenticationRepository: authenticationRepository
         )
     }
     func makeCreateSessionUseCase() -> CreateSessionUseCase {
         DefaultCreateSessionUseCase(
-            authenticationRepository: makeAuthenticationRepository()
+            authenticationRepository: authenticationRepository
         )
     }
 
@@ -87,13 +93,6 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     func makePosterImagesRepository() -> PosterImagesRepository {
         DefaultPosterImagesRepository(
             dataTransferService: dependencies.imageDataTransferService
-        )
-    }
-
-    func makeAuthenticationRepository() -> AuthenticationRepository {
-        DefaultAuthenticationRepository(
-            dataTransferService: dependencies.apiDataTransferService,
-            storage: authenticationStorage
         )
     }
 
