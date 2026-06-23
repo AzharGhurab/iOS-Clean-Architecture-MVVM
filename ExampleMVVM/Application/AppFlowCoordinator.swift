@@ -3,9 +3,7 @@ import UIKit
 final class AppFlowCoordinator {
     
     var navigationController: UINavigationController
-    private let appDIContainer: AppDIContainer
-    private var authFlow: AuthFlowCoordinator?
-    
+    private let appDIContainer: AppDIContainer    
     init(
         navigationController: UINavigationController,
         appDIContainer: AppDIContainer
