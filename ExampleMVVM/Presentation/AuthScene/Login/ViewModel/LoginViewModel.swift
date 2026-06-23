@@ -64,9 +64,7 @@ final class DefaultLoginViewModel: LoginViewModel {
                     self?.actions?.showProfile()
 
                 case .failure(let error):
-                    self?.authenticationState.value = .failed(
-                        message: error.localizedDescription
-                    )
+                    self?.authenticationState.value = .failed(error: error)
                     self?.error.value = error.localizedDescription
                 }
             }
@@ -81,9 +79,7 @@ final class DefaultLoginViewModel: LoginViewModel {
                     self?.actions?.showAuthorize(requestToken)
 
                 case .failure(let error):
-                    self?.authenticationState.value = .failed(
-                        message: error.localizedDescription
-                    )
+                    self?.authenticationState.value = .failed(error: error)
                     self?.error.value = error.localizedDescription
                 }
             }
@@ -101,9 +97,7 @@ final class DefaultLoginViewModel: LoginViewModel {
                     self?.actions?.showProfile()
 
                 case .failure(let error):
-                    self?.authenticationState.value = .failed(
-                        message: error.localizedDescription
-                    )
+                    self?.authenticationState.value = .failed(error: error)
                     self?.error.value = error.localizedDescription
                 }
             }
