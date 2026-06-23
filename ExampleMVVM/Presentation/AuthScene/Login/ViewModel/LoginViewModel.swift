@@ -19,7 +19,6 @@ protocol LoginViewModelInput {
 }
 
 protocol LoginViewModelOutput {
-    var error: Observable<String?> { get }
     var authenticationState: Observable<AuthenticationState?> { get }
 }
 
@@ -27,7 +26,6 @@ protocol LoginViewModel: LoginViewModelInput, LoginViewModelOutput { }
 
 final class DefaultLoginViewModel: LoginViewModel {
 
-    let error: Observable<String?> = Observable(nil)
     let authenticationState: Observable<AuthenticationState?> = Observable(nil)
 
     private let createGuestSessionUseCase: CreateGuestSessionUseCase
@@ -65,7 +63,6 @@ final class DefaultLoginViewModel: LoginViewModel {
 
                 case .failure(let error):
                     self?.authenticationState.value = .failed(error: error)
-                    self?.error.value = error.localizedDescription
                 }
             }
         }
@@ -80,7 +77,6 @@ final class DefaultLoginViewModel: LoginViewModel {
 
                 case .failure(let error):
                     self?.authenticationState.value = .failed(error: error)
-                    self?.error.value = error.localizedDescription
                 }
             }
         }
@@ -98,7 +94,6 @@ final class DefaultLoginViewModel: LoginViewModel {
 
                 case .failure(let error):
                     self?.authenticationState.value = .failed(error: error)
-                    self?.error.value = error.localizedDescription
                 }
             }
         }

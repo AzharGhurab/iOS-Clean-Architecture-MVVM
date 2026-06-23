@@ -28,27 +28,35 @@ final class LoginViewController: UIViewController, StoryboardInstantiable {
     }
 
     private func bind(to viewModel: LoginViewModel) {
-
-        viewModel.error.observe(on: self) { [weak self] error in
-            guard let error else { return }
-
-            let alert = UIAlertController(
-                title: "Error",
-                message: error,
-                preferredStyle: .alert
-            )
-
-            alert.addAction(
-                UIAlertAction(
-                    title: "OK",
-                    style: .default
-                )
-            )
-
-            self?.present(alert, animated: true)
+        
+        viewModel.authenticationState.observe(on: self) { [weak self] state in
+            guard let state else { return }
+            
+            switch state {
+            case .failed(let error):
+                self?.showAlert(message: error.localizedDescription)
+                
+            case .guest, .loggedIn:
+                break
+            }
         }
     }
-
+    private func showAlert(message: String) {
+            let alert = UIAlertController(
+                title: "Error",
+                message: message,
+                preferredStyle: .alert
+                )
+                
+                alert.addAction(
+                    UIAlertAction(
+                        title: "OK",
+                        style: .default
+                    )
+                )
+                
+                self.present(alert, animated: true)
+            }
     @IBAction private func continueAsGuestTapped(_ sender: UIButton) {
         viewModel.continueAsGuest()
     }
