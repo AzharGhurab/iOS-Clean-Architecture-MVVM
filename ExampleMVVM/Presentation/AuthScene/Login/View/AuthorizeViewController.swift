@@ -15,6 +15,7 @@ final class AuthorizeViewController: UIViewController, StoryboardInstantiable {
 
     private var requestToken: String!
     private var onAuthorizationCompleted: ((String) -> Void)?
+    private let appConfiguration = AppConfiguration()
     static func create(
         requestToken: String,
         onAuthorizationCompleted: @escaping (String) -> Void
@@ -34,8 +35,10 @@ final class AuthorizeViewController: UIViewController, StoryboardInstantiable {
 
     @IBAction private func openTMDBTapped(_ sender: UIButton) {
         guard let url = URL(
-            string: "https://www.themoviedb.org/authenticate/\(requestToken ?? "")"
-        ) else { return }
+            string: "\(appConfiguration.tmdbAuthenticationBaseURL)\(requestToken ?? "")"
+        ) else {
+            return
+        }
 
         let safariViewController = SFSafariViewController(url: url)
         safariViewController.delegate = self

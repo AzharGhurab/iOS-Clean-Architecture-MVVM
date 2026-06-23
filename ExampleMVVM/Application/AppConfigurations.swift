@@ -19,4 +19,12 @@ final class AppConfiguration {
         }
         return imageBaseURL
     }()
+    lazy var tmdbAuthenticationBaseURL: String = {
+        guard let url = Bundle.main.object(
+            forInfoDictionaryKey: "TMDBAuthenticationBaseURL"
+        ) as? String else {
+            fatalError("TMDBAuthenticationBaseURL must not be empty in plist")
+        }
+        return url
+    }()
 }
