@@ -36,7 +36,7 @@ final class LoginViewController: UIViewController, StoryboardInstantiable {
             case .failed(let error):
                 self?.showAlert(message: error.localizedDescription)
                 
-            case .guest, .loggedIn:
+            case .guest, .loggedIn, .authorizationRequired:
                 break
             }
         }

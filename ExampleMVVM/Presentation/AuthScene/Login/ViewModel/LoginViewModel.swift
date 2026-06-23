@@ -73,6 +73,8 @@ final class DefaultLoginViewModel: LoginViewModel {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let requestToken):
+                    self?.authenticationState.value =
+                           .authorizationRequired(requestToken: requestToken)
                     self?.actions?.showAuthorize(requestToken)
 
                 case .failure(let error):

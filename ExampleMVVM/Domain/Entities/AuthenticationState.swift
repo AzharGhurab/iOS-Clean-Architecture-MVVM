@@ -9,6 +9,7 @@ import Foundation
 
 enum AuthenticationState {
     case guest(guestSessionId: String)
+    case authorizationRequired(requestToken: String)
     case loggedIn(sessionId: String)
     case failed(error: Error)
 }
