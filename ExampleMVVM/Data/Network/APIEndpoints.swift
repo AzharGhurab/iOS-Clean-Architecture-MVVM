@@ -1,6 +1,14 @@
 import Foundation
 
 struct APIEndpoints {
+    private enum Header {
+           static let contentType = "Content-Type"
+           static let applicationJSON = "application/json;charset=utf-8"
+       }
+
+       private enum Parameter {
+           static let requestToken = "request_token"
+       }
     
     static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
 
@@ -92,10 +100,10 @@ struct APIEndpoints {
             path: "3/authentication/session/new",
             method: .post,
             headerParameters: [
-                "Content-Type": "application/json;charset=utf-8"
+                Header.contentType: Header.applicationJSON
             ],
             bodyParameters: [
-                "request_token": requestToken
+                Parameter.requestToken: requestToken
             ],
             bodyEncoder: JSONBodyEncoder()
         )
