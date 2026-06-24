@@ -109,15 +109,6 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
             actions: actions
         )
     }
-
-    func makeLoginViewController(
-        actions: LoginViewModelActions
-    ) -> LoginViewController {
-        LoginViewController.create(
-            with: makeLoginViewModel(actions: actions)
-        )
-    }
-
     // MARK: - Movies List
     func makeMoviesListViewController(actions: MoviesListViewModelActions) -> MoviesListViewController {
         MoviesListViewController.create(
