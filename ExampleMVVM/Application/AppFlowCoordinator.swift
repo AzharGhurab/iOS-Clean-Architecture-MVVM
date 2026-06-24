@@ -40,9 +40,8 @@ final class AppFlowCoordinator {
         )
         flow.start()
         let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
-        authFlow = AuthFlowCoordinator(
-            navigationController: profileNavigationController,
-            dependencies: moviesSceneDIContainer
+        authFlow = moviesSceneDIContainer.makeAuthFlowCoordinator(
+            navigationController: profileNavigationController
         )
         authFlow?.start()
         profileNavigationController.tabBarItem = UITabBarItem(

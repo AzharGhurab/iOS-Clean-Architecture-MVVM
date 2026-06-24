@@ -195,4 +195,10 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
             dependencies: self
         )
     }
+    func makeAuthFlowCoordinator(navigationController: UINavigationController) -> AuthFlowCoordinator {
+        AuthFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
+        )
+    }
 }
