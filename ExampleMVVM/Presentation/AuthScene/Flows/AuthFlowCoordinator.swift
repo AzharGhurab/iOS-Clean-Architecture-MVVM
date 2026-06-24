@@ -6,17 +6,23 @@
 //
 
 import UIKit
+protocol AuthFlowCoordinatorDependencies {
+    var authenticationStorage: AuthenticationStorage { get }
+
+    func makeLoginViewModel(
+        actions: LoginViewModelActions
+    ) -> LoginViewModel
+}
 
 final class AuthFlowCoordinator {
 
     private weak var navigationController: UINavigationController?
-    private let dependencies: MoviesSceneDIContainer
-
+    private let dependencies: AuthFlowCoordinatorDependencies
     private var loginViewModel: LoginViewModel?
 
     init(
         navigationController: UINavigationController,
-        dependencies: MoviesSceneDIContainer
+        dependencies: AuthFlowCoordinatorDependencies
     ) {
         self.navigationController = navigationController
         self.dependencies = dependencies

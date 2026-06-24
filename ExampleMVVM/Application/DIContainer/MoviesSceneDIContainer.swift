@@ -1,7 +1,7 @@
 import UIKit
 
 
-final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,MoviesHomeFlowCoordinatorDependencies {
+final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,MoviesHomeFlowCoordinatorDependencies,   AuthFlowCoordinatorDependencies {
     
     struct Dependencies {
         let apiDataTransferService: DataTransferService
