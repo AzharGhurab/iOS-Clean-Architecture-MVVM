@@ -4,7 +4,7 @@ final class AppFlowCoordinator {
     
     var navigationController: UINavigationController
     private let appDIContainer: AppDIContainer
-    
+    private var authFlow: AuthFlowCoordinator?
     init(
         navigationController: UINavigationController,
         appDIContainer: AppDIContainer
@@ -40,6 +40,10 @@ final class AppFlowCoordinator {
         )
         flow.start()
         let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
+        authFlow = moviesSceneDIContainer.makeAuthFlowCoordinator(
+            navigationController: profileNavigationController
+        )
+        authFlow?.start()
         profileNavigationController.tabBarItem = UITabBarItem(
             title: "Profile",
             image: UIImage(named: "person"),

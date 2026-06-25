@@ -1,7 +1,7 @@
 import UIKit
 
 
-final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,MoviesHomeFlowCoordinatorDependencies {
+final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,MoviesHomeFlowCoordinatorDependencies,   AuthFlowCoordinatorDependencies {
     
     struct Dependencies {
         let apiDataTransferService: DataTransferService
@@ -14,11 +14,38 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
+    lazy var authenticationStorage: AuthenticationStorage = UserDefaultsAuthenticationStorage()
+    lazy var authenticationRepository: AuthenticationRepository =
+        DefaultAuthenticationRepository(
+            dataTransferService: dependencies.apiDataTransferService,
+            storage: authenticationStorage
+        )
+    
     init(dependencies: Dependencies) {
         self.dependencies = dependencies        
     }
-    
-    // MARK: - Use Cases
+
+    // MARK: - Authentication Use Cases
+
+    func makeCreateGuestSessionUseCase() -> CreateGuestSessionUseCase {
+        DefaultCreateGuestSessionUseCase(
+            authenticationRepository: authenticationRepository
+        )
+    }
+
+    func makeCreateRequestTokenUseCase() -> CreateRequestTokenUseCase {
+        DefaultCreateRequestTokenUseCase(
+            authenticationRepository: authenticationRepository
+        )
+    }
+    func makeCreateSessionUseCase() -> CreateSessionUseCase {
+        DefaultCreateSessionUseCase(
+            authenticationRepository: authenticationRepository
+        )
+    }
+
+    // MARK: - Movies Use Cases
+
     func makeSearchMoviesUseCase() -> SearchMoviesUseCase {
         DefaultSearchMoviesUseCase(
             moviesRepository: makeMoviesRepository(),
@@ -27,14 +54,8 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     }
     func makeFetchGenresUseCase() -> FetchGenresUseCase {
         DefaultFetchGenresUseCase(
-            genresRepository: makeGenresRepository()
+            genresRepository: makeGenresRepository())
         }
-    func makeMoviesHomeFlowCoordinator(navigationController: UINavigationController) -> MoviesHomeFlowCoordinator {
-        MoviesHomeFlowCoordinator(
-            navigationController: navigationController,
-            dependencies: self
-        )
-    }
     func makeFetchHomeMoviesUseCase() -> FetchHomeMoviesUseCase {
         DefaultFetchHomeMoviesUseCase(
             moviesRepository: makeMoviesRepository()
@@ -74,7 +95,20 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
             dataTransferService: dependencies.imageDataTransferService
         )
     }
-    
+
+    // MARK: - Authentication
+
+    func makeLoginViewModel(
+        actions: LoginViewModelActions
+    ) -> LoginViewModel {
+        DefaultLoginViewModel(
+            createGuestSessionUseCase: makeCreateGuestSessionUseCase(),
+            createRequestTokenUseCase: makeCreateRequestTokenUseCase(),
+            createSessionUseCase: makeCreateSessionUseCase(),
+            authenticationStorage: authenticationStorage,
+            actions: actions
+        )
+    }
     // MARK: - Movies List
     func makeMoviesListViewController(actions: MoviesListViewModelActions) -> MoviesListViewController {
         MoviesListViewController.create(
@@ -141,6 +175,19 @@ final class MoviesSceneDIContainer: MoviesSearchFlowCoordinatorDependencies ,Mov
     // MARK: - Flow Coordinators
     func makeMoviesSearchFlowCoordinator(navigationController: UINavigationController) -> MoviesSearchFlowCoordinator {
         MoviesSearchFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
+        )
+    }
+
+    func makeMoviesHomeFlowCoordinator(navigationController: UINavigationController) -> MoviesHomeFlowCoordinator {
+        MoviesHomeFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self
+        )
+    }
+    func makeAuthFlowCoordinator(navigationController: UINavigationController) -> AuthFlowCoordinator {
+        AuthFlowCoordinator(
             navigationController: navigationController,
             dependencies: self
         )
