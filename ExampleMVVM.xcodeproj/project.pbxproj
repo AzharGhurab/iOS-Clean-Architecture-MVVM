@@ -111,6 +111,11 @@
 		564EB4372FF10268005ACA43 /* MovieList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB4352FF10261005ACA43 /* MovieList.swift */; };
 		564EB4392FF12CEA005ACA43 /* MovieListResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB4382FF12CE4005ACA43 /* MovieListResponseDTO.swift */; };
 		564EB43B2FF133D2005ACA43 /* MovieListResponseDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB43A2FF133CB005ACA43 /* MovieListResponseDTO+Mapping.swift */; };
+		564EB43D2FF13A68005ACA43 /* ListsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB43C2FF13A61005ACA43 /* ListsRepository.swift */; };
+		564EB43E2FF13A68005ACA43 /* ListsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB43C2FF13A61005ACA43 /* ListsRepository.swift */; };
+		564EB4402FF13B5D005ACA43 /* DefaultListsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB43F2FF13B58005ACA43 /* DefaultListsRepository.swift */; };
+		564EB4422FF141A2005ACA43 /* FetchListsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB4412FF1419C005ACA43 /* FetchListsUseCase.swift */; };
+		564EB4432FF141A2005ACA43 /* FetchListsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB4412FF1419C005ACA43 /* FetchListsUseCase.swift */; };
 		567765092FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567765082FDF971400E6B1FE /* AuthenticationStorage.swift */; };
 		5677650A2FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567765082FDF971400E6B1FE /* AuthenticationStorage.swift */; };
 		5677650C2FDF97B000E6B1FE /* UserDefaultsAuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */; };
@@ -264,6 +269,9 @@
 		564EB4352FF10261005ACA43 /* MovieList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieList.swift; sourceTree = "<group>"; };
 		564EB4382FF12CE4005ACA43 /* MovieListResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListResponseDTO.swift; sourceTree = "<group>"; };
 		564EB43A2FF133CB005ACA43 /* MovieListResponseDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MovieListResponseDTO+Mapping.swift"; sourceTree = "<group>"; };
+		564EB43C2FF13A61005ACA43 /* ListsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsRepository.swift; sourceTree = "<group>"; };
+		564EB43F2FF13B58005ACA43 /* DefaultListsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultListsRepository.swift; sourceTree = "<group>"; };
+		564EB4412FF1419C005ACA43 /* FetchListsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchListsUseCase.swift; sourceTree = "<group>"; };
 		567765082FDF971400E6B1FE /* AuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStorage.swift; sourceTree = "<group>"; };
 		5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsAuthenticationStorage.swift; sourceTree = "<group>"; };
 		5677650D2FDFA2A300E6B1FE /* DefaultAuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthenticationRepository.swift; sourceTree = "<group>"; };
@@ -382,6 +390,7 @@
 		1F474F4A223666700092DB4B /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				564EB43C2FF13A61005ACA43 /* ListsRepository.swift */,
 				5677650F2FDFA45000E6B1FE /* AuthenticationRepository.swift */,
 				567765082FDF971400E6B1FE /* AuthenticationStorage.swift */,
 				56FA11372FD5659A004861EC /* GenresRepository.swift */,
@@ -629,6 +638,7 @@
 		1FA533D8201EF2F100747E55 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				564EB4412FF1419C005ACA43 /* FetchListsUseCase.swift */,
 				567765182FDFADB700E6B1FE /* CreateSessionUseCase.swift */,
 				567765152FDFADAA00E6B1FE /* CreateRequestTokenUseCase.swift */,
 				567765122FDFAD9800E6B1FE /* CreateGuestSessionUseCase.swift */,
@@ -925,6 +935,7 @@
 		1FFFC824221B0041007D99D2 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				564EB43F2FF13B58005ACA43 /* DefaultListsRepository.swift */,
 				5677650D2FDFA2A300E6B1FE /* DefaultAuthenticationRepository.swift */,
 				56FA113A2FD577AC004861EC /* DefaultGenresRepository.swift */,
 				1FFFC82F221B0041007D99D2 /* DefaultMoviesRepository.swift */,
@@ -1155,6 +1166,7 @@
 				1FC2C9632301FEC0001AE47E /* MovieQueryUDS+Mapping.swift in Sources */,
 				1FE49D90230AA7C200D1D42E /* MovieDetailsViewModel.swift in Sources */,
 				56B2B84C2FE8167B002D6F89 /* AuthenticationState.swift in Sources */,
+				564EB4402FF13B5D005ACA43 /* DefaultListsRepository.swift in Sources */,
 				1F794921247D869700552CC3 /* BlackStyleNavigationBarBehavior.swift in Sources */,
 				1F1FC48A22E3693100BCBA8D /* DataTransferService.swift in Sources */,
 				1FEE31622218B17E00C160B9 /* Observable.swift in Sources */,
@@ -1175,6 +1187,7 @@
 				56FA11362FD54B90004861EC /* MovieDetailsRepository .swift in Sources */,
 				1FC5B7D0242634EB0086FA8C /* UIImageView+ImageSizeAfterAspectFit.swift in Sources */,
 				567765112FDFA45500E6B1FE /* AuthenticationRepository.swift in Sources */,
+				564EB4432FF141A2005ACA43 /* FetchListsUseCase.swift in Sources */,
 				1FE49D8C230AA7C200D1D42E /* MoviesListViewController.swift in Sources */,
 				1FC5B7D2242635CC0086FA8C /* CGSize+ScaledSize.swift in Sources */,
 				CA4034692FB0374D00B54677 /* HomeMovieCollectionViewCell.swift in Sources */,
@@ -1198,6 +1211,7 @@
 				1FFFC833221B0041007D99D2 /* DefaultPosterImagesRepository.swift in Sources */,
 				FC740818216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift in Sources */,
 				1FCE68A1222C873A00CC3074 /* MoviesSceneDIContainer.swift in Sources */,
+				564EB43E2FF13A68005ACA43 /* ListsRepository.swift in Sources */,
 				CA4979EB2FD05BF800657F9A /* CompositeCancellable.swift in Sources */,
 				1F2AB95324278CC20010DEEE /* MoviesRequestDTO+Mapping.swift in Sources */,
 				1F903535230759AC00DEA4BD /* MovieQueryEntity+Mapping.swift in Sources */,
@@ -1237,6 +1251,8 @@
 				1F9034C72306FF2D00DEA4BD /* Endpoint.swift in Sources */,
 				1F9034CE230713FC00DEA4BD /* DataTransferServiceTests.swift in Sources */,
 				1FA53A3922F45CD9009A104C /* SearchMoviesUseCaseTests.swift in Sources */,
+				564EB4422FF141A2005ACA43 /* FetchListsUseCase.swift in Sources */,
+				564EB43D2FF13A68005ACA43 /* ListsRepository.swift in Sources */,
 				56B2B84B2FE8167B002D6F89 /* AuthenticationState.swift in Sources */,
 				1F474F2B22356C7F0092DB4B /* MovieQuery.swift in Sources */,
 				1F4102F5240BEE6A00EC014A /* UseCase.swift in Sources */,

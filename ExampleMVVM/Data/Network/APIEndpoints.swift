@@ -108,6 +108,14 @@ struct APIEndpoints {
             bodyEncoder: JSONBodyEncoder()
         )
     }
+    // MARK: - Lists
+
+    static func getLists(accountId: Int) -> Endpoint<MovieListsResponseDTO> {
+        return Endpoint(
+            path: "3/account/\(accountId)/lists",
+            method: .get
+        )
+    }
 }
 
 
