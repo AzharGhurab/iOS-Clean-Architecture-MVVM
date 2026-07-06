@@ -132,7 +132,7 @@ extension ListDetailsViewController: UICollectionViewDelegateFlowLayout {
             layout collectionViewLayout: UICollectionViewLayout,
             minimumInteritemSpacingForSectionAt section: Int
         ) -> CGFloat {
-            16
+            8
         }
         
         func collectionView(
@@ -148,6 +148,6 @@ extension ListDetailsViewController: UICollectionViewDelegateFlowLayout {
             layout collectionViewLayout: UICollectionViewLayout,
             insetForSectionAt section: Int
         ) -> UIEdgeInsets {
-            UIEdgeInsets(top: 20, left: 24, bottom: 16, right: 24)
+            UIEdgeInsets(top: 8, left: 24, bottom: 8, right: 24)
         }
     }

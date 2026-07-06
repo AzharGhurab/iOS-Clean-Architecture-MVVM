@@ -119,9 +119,11 @@ extension DefaultMovieDetailsViewModel {
 
         if isAddedToList.value {
 
+            let listIdToRemoveFrom = addedListId ?? listId
+
             removeMovieFromListUseCase.execute(
                 requestValue: RemoveMovieFromListUseCaseRequestValue(
-                    listId: listId,
+                    listId: listIdToRemoveFrom,
                     movieId: movieId
                 )
             ) { [weak self] result in

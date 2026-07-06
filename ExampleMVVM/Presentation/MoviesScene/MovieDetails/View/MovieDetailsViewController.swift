@@ -150,7 +150,8 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
             self?.viewModel.updateAddedList(listId: list.id)
         }
 
-        viewController.onListSelected = { [weak self] list in
+        viewController.onDone = { [weak self] list in
+            self?.viewModel.updateAddedList(listId: list.containsMovie ? list.id : nil)
             self?.dismiss(animated: true)
             self?.viewModel.addToList(listId: list.id)
         }

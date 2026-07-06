@@ -28,9 +28,9 @@
                         </userDefinedRuntimeAttributes>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xKH-G1-mQR">
-                        <rect key="frame" x="8" y="138" width="199" height="39"/>
+                        <rect key="frame" x="8" y="138" width="199" height="22"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="39" id="r6A-QT-I0Y" userLabel="height = 34"/>
+                            <constraint firstAttribute="height" constant="22" id="A18-cd-Uvu"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                         <nil key="textColor"/>
