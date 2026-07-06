@@ -4,6 +4,9 @@ protocol MovieDetailsViewModelInput {
     func updatePosterImage(width: Int)
     func toggleFavorite()
     func toggleWatchlist()
+    func addToList(listId: Int)
+    func updateAddedList(listId: Int?)
+    func viewDidLoad()
 }
 
 protocol MovieDetailsViewModelOutput {
@@ -13,7 +16,9 @@ protocol MovieDetailsViewModelOutput {
     var rating: String { get }
     var isFavorite: Observable<Bool> { get }
     var isInWatchlist: Observable<Bool> { get }
+    var isAddedToList: Observable<Bool> { get }
     var overview: String { get }
+    var error: Observable<String?> { get }
 }
 
 protocol MovieDetailsViewModel: MovieDetailsViewModelInput, MovieDetailsViewModelOutput { }
@@ -29,6 +34,19 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let movieDetailsRepository : MovieDetailsRepository
     private(set) var isFavorite: Observable<Bool>
     private(set) var isInWatchlist: Observable<Bool>
+    let isAddedToList: Observable<Bool> = Observable(false)
+    private let addMovieToListUseCase: AddMovieToListUseCase
+    private let removeMovieFromListUseCase: RemoveMovieFromListUseCase
+    private let fetchAccountUseCase: FetchAccountUseCase
+    private let fetchListsUseCase: FetchListsUseCase
+    private let fetchListDetailsUseCase: FetchListDetailsUseCase
+
+    private var fetchAccountTask: Cancellable?
+    private var fetchListsTask: Cancellable?
+    private var fetchDetailsTasks: [Cancellable?] = []
+    private var addedListId: Int?
+    let error: Observable<String?> = Observable(nil)
+    
 
     // MARK: - OUTPUT
     let title: String
@@ -41,6 +59,11 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         movie: Movie,
         posterImagesRepository: PosterImagesRepository,
         movieDetailsRepository: MovieDetailsRepository,
+        addMovieToListUseCase: AddMovieToListUseCase,
+        removeMovieFromListUseCase: RemoveMovieFromListUseCase,
+        fetchAccountUseCase: FetchAccountUseCase,
+        fetchListsUseCase: FetchListsUseCase,
+        fetchListDetailsUseCase: FetchListDetailsUseCase,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.movieId = movie.id
@@ -50,6 +73,11 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.isPosterImageHidden = movie.posterPath == nil
         self.posterImagesRepository = posterImagesRepository
         self.movieDetailsRepository = movieDetailsRepository
+        self.addMovieToListUseCase = addMovieToListUseCase
+        self.removeMovieFromListUseCase = removeMovieFromListUseCase
+        self.fetchAccountUseCase = fetchAccountUseCase
+        self.fetchListsUseCase = fetchListsUseCase
+        self.fetchListDetailsUseCase = fetchListDetailsUseCase
         self.mainQueue = mainQueue
         self.rating = String(format: "%.1f", movie.rating ?? 0)
         self.isFavorite = Observable(movieDetailsRepository.isFavorite(movieId: movieId))
@@ -62,7 +90,7 @@ extension DefaultMovieDetailsViewModel {
     
     func updatePosterImage(width: Int) {
         guard let posterImagePath = posterImagePath else { return }
-
+        
         imageLoadTask = posterImagesRepository.fetchImage(
             with: posterImagePath,
             width: width
@@ -86,5 +114,104 @@ extension DefaultMovieDetailsViewModel {
     func toggleWatchlist() {
         movieDetailsRepository.toggleWatchlist(movieId: movieId)
         isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
+    }
+    func addToList(listId: Int) {
+
+        if isAddedToList.value {
+
+            removeMovieFromListUseCase.execute(
+                requestValue: RemoveMovieFromListUseCaseRequestValue(
+                    listId: listId,
+                    movieId: movieId
+                )
+            ) { [weak self] result in
+                self?.mainQueue.async {
+                    switch result {
+                    case .success:
+                        self?.addedListId = nil
+                        self?.isAddedToList.value = false
+                    case .failure(let error):
+                        self?.error.value = error.localizedDescription
+                    }
+                }
+            }
+
+        } else {
+
+            addMovieToListUseCase.execute(
+                requestValue: AddMovieToListUseCaseRequestValue(
+                    listId: listId,
+                    movieId: movieId
+                )
+            ) { [weak self] result in
+                self?.mainQueue.async {
+                    switch result {
+                    case .success:
+                        self?.addedListId = listId
+                        self?.isAddedToList.value = true
+                    case .failure(let error):
+                        self?.error.value = error.localizedDescription
+                    }
+                }
+            }
+        }
+    }
+    func updateAddedList(listId: Int?) {
+        addedListId = listId
+        isAddedToList.value = listId != nil
+    }
+    func viewDidLoad() {
+        fetchAccountTask = fetchAccountUseCase.execute { [weak self] result in
+            switch result {
+            case .success(let account):
+                self?.checkMovieListStatus(accountId: account.id)
+
+            case .failure(let error):
+                self?.error.value = error.localizedDescription
+            }
+        }
+    }
+
+    private func checkMovieListStatus(accountId: Int) {
+        fetchListsTask = fetchListsUseCase.execute(
+            requestValue: FetchListsUseCaseRequestValue(accountId: accountId)
+        ) { [weak self] result in
+            switch result {
+            case .success(let lists):
+                self?.checkMovieInLists(lists)
+
+            case .failure(let error):
+                self?.error.value = error.localizedDescription
+            }
+        }
+    }
+
+    private func checkMovieInLists(_ lists: [MovieList]) {
+        fetchDetailsTasks.removeAll()
+
+        for list in lists {
+            let task = fetchListDetailsUseCase.execute(listId: list.id) { [weak self] result in
+                guard let self = self else { return }
+
+                switch result {
+                case .success(let movies):
+                    let containsMovie = movies.contains {
+                        String($0.id) == self.movieId
+                    }
+
+                    if containsMovie {
+                        self.mainQueue.async {
+                            self.addedListId = list.id
+                            self.isAddedToList.value = true
+                        }
+                    }
+
+                case .failure(let error):
+                    self.error.value = error.localizedDescription
+                }
+            }
+
+            fetchDetailsTasks.append(task)
+        }
     }
 }

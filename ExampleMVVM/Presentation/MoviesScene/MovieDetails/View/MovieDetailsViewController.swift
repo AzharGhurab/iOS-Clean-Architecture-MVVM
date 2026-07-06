@@ -7,14 +7,20 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     @IBOutlet private weak var watchlistButton: UIButton!
     @IBOutlet private weak var favoriteButton: UIButton!
     @IBOutlet private var overviewTextView: UITextView!
-
+    @IBOutlet private weak var addToListButton: UIButton!
+    
     // MARK: - Lifecycle
 
     private var viewModel: MovieDetailsViewModel!
+    var makeSelectListViewController: (() -> SelectListViewController)?
     
-    static func create(with viewModel: MovieDetailsViewModel) -> MovieDetailsViewController {
+    static func create(
+        with viewModel: MovieDetailsViewModel,
+        makeSelectListViewController: (() -> SelectListViewController)?
+    ) -> MovieDetailsViewController {
         let view = MovieDetailsViewController.instantiateViewController()
         view.viewModel = viewModel
+        view.makeSelectListViewController = makeSelectListViewController
         return view
     }
     
@@ -22,70 +28,110 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         super.viewDidLoad()
         setupViews()
         bind(to: viewModel)
+        viewModel.viewDidLoad()
     }
-
+    
     private func bind(to viewModel: MovieDetailsViewModel) {
         viewModel.posterImage.observe(on: self) { [weak self]in
             self?.posterImageView.image = $0.flatMap(UIImage.init)
-            }
+        }
         viewModel.isFavorite.observe(on: self) { [weak self] isFavorite in
             self?.updateFavoriteButton(isFavorite: isFavorite)
-            }
-            
+        }
+        
         viewModel.isInWatchlist.observe(on: self) { [weak self] isInWatchlist in
             self?.updateWatchlistButton(isInWatchlist: isInWatchlist)
-            }
+        }
+        viewModel.isAddedToList.observe(on: self) { [weak self] isAdded in
+            self?.updateAddToListButton(isAdded: isAdded)
+        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         viewModel.updatePosterImage(width: Int(posterImageView.imageSizeAfterAspectFit.scaledSize.width))
     }
-
+    
     // MARK: - Private
-
+    
     private func setupViews() {
         title = viewModel.title
         overviewTextView.text = viewModel.overview
         posterImageView.isHidden = viewModel.isPosterImageHidden
         ratingLabel.text = "⭐️ \(viewModel.rating)"
         view.accessibilityIdentifier = AccessibilityIdentifier.movieDetailsView
-        favoriteButton.semanticContentAttribute = .forceLeftToRight
-        favoriteButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        configureActionButton(
+            favoriteButton,
+            image: UIImage(named: "heart"),
+            title: "Add Favorite",
+            color: .systemGray
+        )
         
-        watchlistButton.semanticContentAttribute = .forceLeftToRight
-        watchlistButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        configureActionButton(
+            watchlistButton,
+            image: UIImage(systemName: "bookmark"),
+            title: "Add Watchlist",
+            color: .systemGray
+        )
+        
+        updateAddToListButton(isAdded: false)
+    }
+    private func configureActionButton(
+        _ button: UIButton,
+        image: UIImage?,
+        title: String,
+        color: UIColor
+    ) {
+        var config = UIButton.Configuration.plain()
+        config.image = image
+        config.title = title
+        config.imagePlacement = .top
+        config.imagePadding = 8
+
+        button.configuration = config
+        button.tintColor = color
     }
     
     private func updateFavoriteButton(isFavorite: Bool) {
-        favoriteButton.setImage(
-            UIImage(named: isFavorite ? "heart.fill" : "heart"),
-            for: .normal
+        var config = UIButton.Configuration.plain()
+
+        config.image = UIImage(
+            systemName: isFavorite ? "heart.fill" : "heart"
         )
-        
-        favoriteButton.setTitle(
-            isFavorite ? " Added Favorite" : " Add Favorite",
-            for: .normal
-        )
-        
-        let color: UIColor = isFavorite ? .systemRed : .systemGray
-        favoriteButton.tintColor = color
-        favoriteButton.setTitleColor(color, for: .normal)
+        config.title = isFavorite ? "Added Favorite" : "Add Favorite"
+        config.imagePlacement = .top
+        config.imagePadding = 8
+
+        favoriteButton.configuration = config
+        favoriteButton.tintColor = isFavorite ? .systemRed : .systemGray
     }
     private func updateWatchlistButton(isInWatchlist: Bool) {
-        watchlistButton.setImage(
-            UIImage(named: isInWatchlist ? "checkmark" : "plus"),
-            for: .normal
-        )
+        let image = isInWatchlist
+        ? UIImage(systemName: "bookmark.fill")
+        : UIImage(systemName: "bookmark")
         
-        watchlistButton.setTitle(
-            isInWatchlist ? " Added Watchlist" : " Add Watchlist",
-            for: .normal
-        )
+        var config = UIButton.Configuration.plain()
+        config.image = image
+        config.title = isInWatchlist ? "Added Watchlist" : "Add Watchlist"
+        config.imagePlacement = .top
+        config.imagePadding = 8
         
-        let color: UIColor = isInWatchlist ? .systemGreen : .systemGray
-        watchlistButton.tintColor = color
-        watchlistButton.setTitleColor(color, for: .normal)
+        watchlistButton.configuration = config
+        watchlistButton.tintColor = isInWatchlist ? .systemGreen : .systemGray
+    }
+    private func updateAddToListButton(isAdded: Bool) {
+        var config = UIButton.Configuration.plain()
+
+        config.image = UIImage(
+            systemName: isAdded ? "text.badge.checkmark" : "text.badge.plus"
+        )
+
+        config.title = isAdded ? "Added to List" : "Add to List"
+        config.imagePlacement = .top
+        config.imagePadding = 8
+
+        addToListButton.configuration = config
+        addToListButton.tintColor = isAdded ? .systemPink : .systemBlue
     }
     // MARK: - Actions
     
@@ -95,5 +141,25 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     
     @IBAction private func favoriteTapped(_ sender: UIButton) {
         viewModel.toggleFavorite()
+    }
+    
+    @IBAction private func addToListButtonTapped(_ sender: UIButton) {
+        guard let viewController = makeSelectListViewController?() else { return }
+
+        viewController.onExistingListFound = { [weak self] list in
+            self?.viewModel.updateAddedList(listId: list.id)
+        }
+
+        viewController.onListSelected = { [weak self] list in
+            self?.dismiss(animated: true)
+            self?.viewModel.addToList(listId: list.id)
+        }
+
+        if let sheet = viewController.sheetPresentationController {
+            sheet.detents = [.medium()]
+            sheet.prefersGrabberVisible = true
+        }
+
+        present(viewController, animated: true)
     }
 }

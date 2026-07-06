@@ -11,6 +11,7 @@ final class UserDefaultsAuthenticationStorage: AuthenticationStorage {
 
     private let sessionIdKey = "session_id"
     private let guestSessionIdKey = "guest_session_id"
+    private let accountIdKey = "account_id"
 
     private let userDefaults: UserDefaults
 
@@ -25,6 +26,11 @@ final class UserDefaultsAuthenticationStorage: AuthenticationStorage {
     func guestSessionId() -> String? {
         userDefaults.string(forKey: guestSessionIdKey)
     }
+    
+    func accountId() -> Int? {
+        let value = userDefaults.integer(forKey: accountIdKey)
+        return value == 0 ? nil : value
+    }
 
     func save(sessionId: String) {
         userDefaults.set(sessionId, forKey: sessionIdKey)
@@ -33,6 +39,10 @@ final class UserDefaultsAuthenticationStorage: AuthenticationStorage {
     func save(guestSessionId: String) {
         userDefaults.set(guestSessionId, forKey: guestSessionIdKey)
     }
+    
+    func save(accountId: Int) {
+        userDefaults.set(accountId, forKey: accountIdKey)
+    }
 
     func clearSession() {
         userDefaults.removeObject(forKey: sessionIdKey)
@@ -40,5 +50,8 @@ final class UserDefaultsAuthenticationStorage: AuthenticationStorage {
 
     func clearGuestSession() {
         userDefaults.removeObject(forKey: guestSessionIdKey)
+    }
+    func clearAccountId() {
+        userDefaults.removeObject(forKey: accountIdKey)
     }
 }

@@ -18,4 +18,8 @@ protocol AuthenticationRepository {
         requestToken: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) -> Cancellable?
+    
+    func fetchAccount(
+        completion: @escaping (Result<Account, Error>) -> Void
+    ) -> Cancellable?
 }

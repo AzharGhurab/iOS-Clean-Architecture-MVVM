@@ -1,5 +1,5 @@
 //
-//  MovieListResponseDTO.swift
+//  MovieListsResponseDTO.swift
 //  ExampleMVVM
 //
 //  Created by Azhar Ghurab on 13/01/1448 AH.

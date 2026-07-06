@@ -12,5 +12,5 @@ struct MovieList {
     let name: String
     let description: String
     let itemCount: Int
-    let posterPath: String?
+    var posterPath: String?
 }

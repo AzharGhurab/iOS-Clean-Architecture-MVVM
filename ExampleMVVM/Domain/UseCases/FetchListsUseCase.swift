@@ -8,6 +8,7 @@
 import Foundation
 
 protocol FetchListsUseCase {
+    @discardableResult
     func execute(
         requestValue: FetchListsUseCaseRequestValue,
         completion: @escaping (Result<[MovieList], Error>) -> Void
