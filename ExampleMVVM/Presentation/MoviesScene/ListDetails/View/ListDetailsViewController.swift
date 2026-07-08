@@ -140,7 +140,7 @@ extension ListDetailsViewController: UICollectionViewDelegateFlowLayout {
             layout collectionViewLayout: UICollectionViewLayout,
             minimumLineSpacingForSectionAt section: Int
         ) -> CGFloat {
-            9
+            0
         }
         
         func collectionView(

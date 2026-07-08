@@ -175,7 +175,7 @@ extension SelectListViewController: UITableViewDelegate {
     ) {
         if selectedIndex == indexPath.row {
             selectedIndex = nil
-            selectedList = nil
+            selectedList = lists[indexPath.row]
         } else {
             selectedIndex = indexPath.row
             selectedList = lists[indexPath.row]

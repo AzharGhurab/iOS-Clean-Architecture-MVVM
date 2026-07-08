@@ -95,15 +95,20 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     private func updateFavoriteButton(isFavorite: Bool) {
         var config = UIButton.Configuration.plain()
 
-        config.image = UIImage(
-            systemName: isFavorite ? "heart.fill" : "heart"
+        config.image = UIImage(systemName: isFavorite ? "heart.fill" : "heart")
+
+        config.attributedTitle = AttributedString(
+            isFavorite ? "Added Favorite" : "Add Favorite",
+            attributes: AttributeContainer([
+                .foregroundColor: UIColor.black
+            ])
         )
-        config.title = isFavorite ? "Added Favorite" : "Add Favorite"
+
         config.imagePlacement = .top
         config.imagePadding = 8
 
         favoriteButton.configuration = config
-        favoriteButton.tintColor = isFavorite ? .systemRed : .systemGray
+        favoriteButton.tintColor = .systemRed
     }
     private func updateWatchlistButton(isInWatchlist: Bool) {
         let image = isInWatchlist
@@ -117,7 +122,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         config.imagePadding = 8
         
         watchlistButton.configuration = config
-        watchlistButton.tintColor = isInWatchlist ? .systemGreen : .systemGray
+        watchlistButton.tintColor = isInWatchlist ? .systemGreen : .black
     }
     private func updateAddToListButton(isAdded: Bool) {
         var config = UIButton.Configuration.plain()
