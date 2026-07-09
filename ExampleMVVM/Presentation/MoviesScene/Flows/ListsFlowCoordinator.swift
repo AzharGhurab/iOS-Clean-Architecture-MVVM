@@ -42,27 +42,27 @@ final class ListsFlowCoordinator {
     }
 
     func start() {
-        showLists()
+        let viewController = makeRootViewController()
+
+        navigationController?.pushViewController(
+            viewController,
+            animated: true
+        )
     }
 
-    private func showLists() {
+    private func makeRootViewController() -> ListsViewController {
         let actions = ListsViewModelActions(
             showListDetails: { [weak self] list in
                 self?.showListDetails(list: list)
             }
         )
 
-        let viewController = dependencies.makeListsViewController(
+        return dependencies.makeListsViewController(
             accountId: accountId,
             actions: actions,
             onCreateList: { [weak self] in
                 self?.showCreateList()
             }
-        )
-
-        navigationController?.pushViewController(
-            viewController,
-            animated: true
         )
     }
 
