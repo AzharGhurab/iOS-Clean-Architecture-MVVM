@@ -42,6 +42,12 @@ final class DefaultListsViewModel: ListsViewModel {
         willSet { fetchListsTask?.cancel() }
     }
 
+    private var posterLoadTasks: [Cancellable] = []
+
+    private var deleteListTask: Cancellable? {
+        willSet { deleteListTask?.cancel() }
+    }
+
     init(
         fetchListsUseCase: FetchListsUseCase,
         fetchListDetailsUseCase: FetchListDetailsUseCase,
@@ -83,11 +89,32 @@ final class DefaultListsViewModel: ListsViewModel {
         actions.showListDetails(list)
     }
 
+    func deleteList(at index: Int) {
+        let list = items.value[index]
+
+        deleteListTask = deleteListUseCase.execute(listId: list.id) { [weak self] result in
+            self?.mainQueue.async {
+                switch result {
+                case .success:
+                    var updatedItems = self?.items.value ?? []
+                    updatedItems.remove(at: index)
+                    self?.items.value = updatedItems
+
+                case .failure(let error):
+                    self?.error.value = error.localizedDescription
+                }
+            }
+        }
+    }
+
     private func loadPosters(for lists: [MovieList]) {
+        posterLoadTasks.forEach { $0.cancel() }
+        posterLoadTasks.removeAll()
+
         var updatedLists = lists
 
         for (index, list) in lists.enumerated() {
-            fetchListDetailsUseCase.execute(listId: list.id) { [weak self] result in
+            let task = fetchListDetailsUseCase.execute(listId: list.id) { [weak self] result in
                 self?.mainQueue.async {
                     switch result {
                     case .success(let movies):
@@ -99,22 +126,9 @@ final class DefaultListsViewModel: ListsViewModel {
                     }
                 }
             }
-        }
-    }
-    func deleteList(at index: Int) {
-        let list = items.value[index]
 
-        deleteListUseCase.execute(listId: list.id) { [weak self] result in
-            self?.mainQueue.async {
-                switch result {
-                case .success:
-                    var updatedItems = self?.items.value ?? []
-                    updatedItems.remove(at: index)
-                    self?.items.value = updatedItems
-
-                case .failure(let error):
-                    self?.error.value = error.localizedDescription
-                }
+            if let task = task {
+                posterLoadTasks.append(task)
             }
         }
     }
