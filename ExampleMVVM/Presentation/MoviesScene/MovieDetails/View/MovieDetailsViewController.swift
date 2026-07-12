@@ -149,16 +149,15 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     }
     
     @IBAction private func addToListButtonTapped(_ sender: UIButton) {
-        guard let viewController = makeSelectListViewController?() else { return }
-
-        viewController.onExistingListFound = { [weak self] list in
-            self?.viewModel.updateAddedList(listId: list.id)
+        guard let viewController = makeSelectListViewController?() else {
+            return
         }
 
-        viewController.onDone = { [weak self] list in
-            self?.viewModel.updateAddedList(listId: list.containsMovie ? list.id : nil)
-            self?.dismiss(animated: true)
+        viewController.onDone = { [weak self, weak viewController]
+            (list: SelectListItem) in
+
             self?.viewModel.addToList(listId: list.id)
+            viewController?.dismiss(animated: true)
         }
 
         if let sheet = viewController.sheetPresentationController {

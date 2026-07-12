@@ -116,44 +116,79 @@ extension DefaultMovieDetailsViewModel {
         isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
     }
     func addToList(listId: Int) {
+        guard let currentListId = addedListId else {
+            addMovie(to: listId)
+            return
+        }
 
-        if isAddedToList.value {
+        if currentListId == listId {
+            removeMovie(from: currentListId)
+        } else {
+            moveMovie(
+                from: currentListId,
+                to: listId
+            )
+        }
+    }
+    private func addMovie(to listId: Int) {
+        addMovieToListUseCase.execute(
+            requestValue: AddMovieToListUseCaseRequestValue(
+                listId: listId,
+                movieId: movieId
+            )
+        ) { [weak self] result in
+            self?.mainQueue.async {
+                switch result {
+                case .success:
+                    self?.addedListId = listId
+                    self?.isAddedToList.value = true
 
-            let listIdToRemoveFrom = addedListId ?? listId
-
-            removeMovieFromListUseCase.execute(
-                requestValue: RemoveMovieFromListUseCaseRequestValue(
-                    listId: listIdToRemoveFrom,
-                    movieId: movieId
-                )
-            ) { [weak self] result in
-                self?.mainQueue.async {
-                    switch result {
-                    case .success:
-                        self?.addedListId = nil
-                        self?.isAddedToList.value = false
-                    case .failure(let error):
-                        self?.error.value = error.localizedDescription
-                    }
+                case .failure(let error):
+                    self?.error.value = error.localizedDescription
                 }
             }
+        }
+    }
 
-        } else {
+    private func removeMovie(from listId: Int) {
+        removeMovieFromListUseCase.execute(
+            requestValue: RemoveMovieFromListUseCaseRequestValue(
+                listId: listId,
+                movieId: movieId
+            )
+        ) { [weak self] result in
+            self?.mainQueue.async {
+                switch result {
+                case .success:
+                    self?.addedListId = nil
+                    self?.isAddedToList.value = false
 
-            addMovieToListUseCase.execute(
-                requestValue: AddMovieToListUseCaseRequestValue(
-                    listId: listId,
-                    movieId: movieId
-                )
-            ) { [weak self] result in
-                self?.mainQueue.async {
-                    switch result {
-                    case .success:
-                        self?.addedListId = listId
-                        self?.isAddedToList.value = true
-                    case .failure(let error):
-                        self?.error.value = error.localizedDescription
-                    }
+                case .failure(let error):
+                    self?.error.value = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    private func moveMovie(
+        from currentListId: Int,
+        to newListId: Int
+    ) {
+        removeMovieFromListUseCase.execute(
+            requestValue: RemoveMovieFromListUseCaseRequestValue(
+                listId: currentListId,
+                movieId: movieId
+            )
+        ) { [weak self] result in
+            guard let self else { return }
+
+            switch result {
+            case .success:
+                self.addMovie(to: newListId)
+
+            case .failure(let error):
+                self.mainQueue.async {
+                    self.error.value = error.localizedDescription
                 }
             }
         }

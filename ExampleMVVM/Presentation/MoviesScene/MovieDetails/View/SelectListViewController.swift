@@ -84,21 +84,20 @@ final class SelectListViewController: UIViewController {
 
     private func bind(to viewModel: SelectListViewModel) {
         viewModel.items.observe(on: self) { [weak self] lists in
-            guard let self = self else { return }
-            
+            guard let self else { return }
+
             self.lists = lists
-            self.selectedIndex = lists.firstIndex { $0.containsMovie }
-            
+
+            self.selectedIndex = lists.firstIndex {
+                $0.containsMovie
+            }
+
             if let selectedIndex = self.selectedIndex {
                 self.selectedList = lists[selectedIndex]
             } else {
                 self.selectedList = nil
             }
-            
-            if let existingList = lists.first(where: { $0.containsMovie }) {
-                self.onExistingListFound?(existingList)
-            }
-            
+
             self.updateDoneButton()
             self.tableView.reloadData()
         }
@@ -173,9 +172,14 @@ extension SelectListViewController: UITableViewDelegate {
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
     ) {
+        tableView.deselectRow(
+            at: indexPath,
+            animated: false
+        )
+
         if selectedIndex == indexPath.row {
             selectedIndex = nil
-            selectedList = lists[indexPath.row]
+            selectedList =  lists[indexPath.row]
         } else {
             selectedIndex = indexPath.row
             selectedList = lists[indexPath.row]
@@ -184,4 +188,5 @@ extension SelectListViewController: UITableViewDelegate {
         updateDoneButton()
         tableView.reloadData()
     }
+    
 }
