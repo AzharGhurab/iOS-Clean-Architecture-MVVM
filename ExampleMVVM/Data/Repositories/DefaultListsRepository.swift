@@ -7,6 +7,14 @@
 
 import Foundation
 
+private enum AuthenticationError: LocalizedError {
+    case missingSessionId
+
+    var errorDescription: String? {
+        "Session id is missing."
+    }
+}
+
 final class DefaultListsRepository {
 
     private let dataTransferService: DataTransferService
@@ -24,6 +32,21 @@ final class DefaultListsRepository {
     }
 }
 
+// MARK: - Private
+
+private extension DefaultListsRepository {
+
+    func validSessionId() throws -> String {
+        guard let sessionId = authenticationStorage.sessionId() else {
+            throw AuthenticationError.missingSessionId
+        }
+
+        return sessionId
+    }
+}
+
+// MARK: - ListsRepository
+
 extension DefaultListsRepository: ListsRepository {
 
     func fetchLists(
@@ -31,12 +54,12 @@ extension DefaultListsRepository: ListsRepository {
         completion: @escaping (Result<[MovieList], Error>) -> Void
     ) -> Cancellable? {
 
-        guard let sessionId = authenticationStorage.sessionId() else {
-            completion(.failure(NSError(
-                domain: "Authentication",
-                code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Session id is missing."]
-            )))
+        let sessionId: String
+
+        do {
+            sessionId = try validSessionId()
+        } catch {
+            completion(.failure(error))
             return nil
         }
 
@@ -69,12 +92,12 @@ extension DefaultListsRepository: ListsRepository {
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
-        guard let sessionId = authenticationStorage.sessionId() else {
-            completion(.failure(NSError(
-                domain: "Authentication",
-                code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Session id is missing."]
-            )))
+        let sessionId: String
+
+        do {
+            sessionId = try validSessionId()
+        } catch {
+            completion(.failure(error))
             return nil
         }
 
@@ -136,12 +159,12 @@ extension DefaultListsRepository: ListsRepository {
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
-        guard let sessionId = authenticationStorage.sessionId() else {
-            completion(.failure(NSError(
-                domain: "Authentication",
-                code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Session id is missing."]
-            )))
+        let sessionId: String
+
+        do {
+            sessionId = try validSessionId()
+        } catch {
+            completion(.failure(error))
             return nil
         }
 
@@ -174,12 +197,12 @@ extension DefaultListsRepository: ListsRepository {
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
-        guard let sessionId = authenticationStorage.sessionId() else {
-            completion(.failure(NSError(
-                domain: "Authentication",
-                code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Session id is missing."]
-            )))
+        let sessionId: String
+
+        do {
+            sessionId = try validSessionId()
+        } catch {
+            completion(.failure(error))
             return nil
         }
 
@@ -200,13 +223,15 @@ extension DefaultListsRepository: ListsRepository {
                 if responseDTO.success {
                     completion(.success(()))
                 } else {
-                    completion(.failure(NSError(
+                    let error = NSError(
                         domain: "TMDB",
                         code: responseDTO.statusCode ?? 0,
                         userInfo: [
                             NSLocalizedDescriptionKey: responseDTO.statusMessage ?? "Unknown error"
                         ]
-                    )))
+                    )
+
+                    completion(.failure(error))
                 }
 
             case .failure(let error):
@@ -222,12 +247,12 @@ extension DefaultListsRepository: ListsRepository {
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
-        guard let sessionId = authenticationStorage.sessionId() else {
-            completion(.failure(NSError(
-                domain: "Authentication",
-                code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Session id is missing."]
-            )))
+        let sessionId: String
+
+        do {
+            sessionId = try validSessionId()
+        } catch {
+            completion(.failure(error))
             return nil
         }
 
@@ -248,13 +273,15 @@ extension DefaultListsRepository: ListsRepository {
                 if responseDTO.success {
                     completion(.success(()))
                 } else {
-                    completion(.failure(NSError(
+                    let error = NSError(
                         domain: "TMDB",
                         code: responseDTO.statusCode ?? 0,
                         userInfo: [
                             NSLocalizedDescriptionKey: responseDTO.statusMessage ?? "Unknown error"
                         ]
-                    )))
+                    )
+
+                    completion(.failure(error))
                 }
 
             case .failure(let error):
