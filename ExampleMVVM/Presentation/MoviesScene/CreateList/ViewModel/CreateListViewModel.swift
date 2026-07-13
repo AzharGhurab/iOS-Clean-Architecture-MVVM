@@ -52,14 +52,19 @@ final class DefaultCreateListViewModel: CreateListViewModel {
             requestValue: requestValue
         ) { [weak self] result in
             DispatchQueue.main.async {
-                self?.loading.value = false
-                
+                guard let self else {
+                    return
+                }
+
+                self.loading.value = false
+
                 switch result {
                 case .success:
-                    self?.actions?.didCreateList()
-                    
-                case .failure(let error):
-                    self?.error.value = error.localizedDescription
+                    self.actions?.didCreateList()
+
+                case .failure:
+                    self.error.value =
+                        "Failed to create list. Please try again."
                 }
             }
         }

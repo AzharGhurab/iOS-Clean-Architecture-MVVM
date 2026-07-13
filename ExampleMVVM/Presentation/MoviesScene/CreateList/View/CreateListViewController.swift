@@ -32,12 +32,10 @@ final class CreateListViewController: UIViewController {
 
         title = "Create List"
         setupView()
+        bind(to: viewModel)
     }
 
     @IBAction private func createButtonTapped(_ sender: UIButton) {
-        createButton.isEnabled = false
-        createButton.setTitle("Creating...", for: .normal)
-
         viewModel.createList(
             name: nameTextField.text ?? "",
             description: descriptionTextView.text == "Enter list description" ? "" : descriptionTextView.text
@@ -100,6 +98,46 @@ private extension CreateListViewController {
             descriptionCounterLabel.trailingAnchor.constraint(equalTo: descriptionTextView.trailingAnchor, constant: -12),
             descriptionCounterLabel.bottomAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: -12)
         ])
+    }
+
+    func bind(to viewModel: CreateListViewModel) {
+        viewModel.loading.observe(on: self) { [weak self] isLoading in
+            self?.updateCreateButton(isLoading: isLoading)
+        }
+
+        viewModel.error.observe(on: self) { [weak self] message in
+            guard let message else {
+                return
+            }
+
+            self?.showError(message)
+        }
+    }
+
+    func updateCreateButton(isLoading: Bool) {
+        createButton.isEnabled = !isLoading
+
+        createButton.setTitle(
+            isLoading ? "Creating..." : "Create List",
+            for: .normal
+        )
+    }
+
+    func showError(_ message: String) {
+        let alert = UIAlertController(
+            title: "Error",
+            message: message,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: .default
+            )
+        )
+
+        present(alert, animated: true)
     }
 }
 
