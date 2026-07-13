@@ -1,12 +1,12 @@
 import Foundation
 
 struct APIEndpoints {
-    private enum Header {
+     enum Header {
            static let contentType = "Content-Type"
            static let applicationJSON = "application/json;charset=utf-8"
        }
 
-       private enum Parameter {
+        enum Parameter {
            static let requestToken = "request_token"
        }
     
@@ -64,156 +64,4 @@ struct APIEndpoints {
             responseDecoder: RawDataResponseDecoder()
         )
     }
-    // MARK: - Genres
-        
-        static func getMovieGenres() -> Endpoint<GenresResponseDTO> {
-            return Endpoint(
-                path: "3/genre/movie/list",
-                method: .get
-            )
-        }
-        
-        static func getTVGenres() -> Endpoint<GenresResponseDTO> {
-            return Endpoint(
-                path: "3/genre/tv/list",
-                method: .get
-            )
-        }
-    // MARK: - Authentication
-    
-    static func createGuestSession() -> Endpoint<GuestSessionResponseDTO> {
-        return Endpoint(
-            path: "3/authentication/guest_session/new",
-            method: .get
-        )
-    }
-    
-    static func createRequestToken() -> Endpoint<RequestTokenResponseDTO> {
-        return Endpoint(
-            path: "3/authentication/token/new",
-            method: .get
-        )
-    }
-    
-    static func createSession(requestToken: String) -> Endpoint<SessionResponseDTO> {
-        return Endpoint(
-            path: "3/authentication/session/new",
-            method: .post,
-            headerParameters: [
-                Header.contentType: Header.applicationJSON
-            ],
-            bodyParameters: [
-                Parameter.requestToken: requestToken
-            ],
-            bodyEncoder: JSONBodyEncoder()
-        )
-    }
-    // MARK: - Lists
-    static func getLists(
-        accountId: Int,
-        sessionId: String
-    ) -> Endpoint<MovieListsResponseDTO> {
-        return Endpoint(
-            path: "3/account/\(accountId)/lists",
-            method: .get,
-            queryParameters: [
-                "session_id": sessionId
-            ]
-        )
-    }
-    static func createList(
-        requestDTO: CreateListRequestDTO,
-        sessionId: String
-    ) -> Endpoint<CreateListResponseDTO> {
-        return Endpoint(
-            path: "3/list",
-            method: .post,
-            headerParameters: [
-                Header.contentType: Header.applicationJSON
-            ],
-            queryParameters: [
-                "session_id": sessionId
-            ],
-            bodyParameters: [
-                "name": requestDTO.name,
-                "description": requestDTO.description,
-                "language": requestDTO.language
-            ],
-            bodyEncoder: JSONBodyEncoder()
-        )
-    }
-    static func getListDetails(
-        listId: Int
-    ) -> Endpoint<ListDetailsResponseDTO> {
-        return Endpoint(
-            path: "3/list/\(listId)",
-            method: .get
-        )
-    }
-    static func deleteList(
-        listId: Int,
-        sessionId: String
-    ) -> Endpoint<CreateListResponseDTO> {
-        Endpoint(
-            path: "3/list/\(listId)",
-            method: .delete,
-            queryParameters: [
-                "session_id": sessionId
-            ]
-        )
-    }
-    static func getAccountDetails(
-        sessionId: String
-    ) -> Endpoint<AccountResponseDTO> {
-
-        Endpoint(
-            path: "3/account",
-            method: .get,
-            queryParameters: [
-                "session_id": sessionId
-            ]
-        )
-    }
-    static func addMovieToList(
-        listId: Int,
-        movieId: String,
-        sessionId: String
-    ) -> Endpoint<CreateListResponseDTO> {
-        return Endpoint(
-            path: "3/list/\(listId)/add_item",
-            method: .post,
-            headerParameters: [
-                Header.contentType: Header.applicationJSON
-            ],
-            queryParameters: [
-                "session_id": sessionId
-            ],
-            bodyParameters: [
-                "media_id": movieId
-            ],
-            bodyEncoder: JSONBodyEncoder()
-        )
-    }
-    static func removeMovieFromList(
-        listId: Int,
-        movieId: String,
-        sessionId: String
-    ) -> Endpoint<CreateListResponseDTO> {
-        return Endpoint(
-            path: "3/list/\(listId)/remove_item",
-            method: .post,
-            headerParameters: [
-                Header.contentType: Header.applicationJSON
-            ],
-            queryParameters: [
-                "session_id": sessionId
-            ],
-            bodyParameters: [
-                "media_id": movieId
-            ],
-            bodyEncoder: JSONBodyEncoder()
-        )
-    }
 }
-
-

@@ -142,6 +142,9 @@
 		564EB54D2FFA537B005ACA43 /* SelectListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB54B2FFA52CC005ACA43 /* SelectListViewModel.swift */; };
 		564EB5542FFB63FB005ACA43 /* RemoveMovieFromListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5532FFB63F3005ACA43 /* RemoveMovieFromListUseCase.swift */; };
 		564EB5552FFB63FB005ACA43 /* RemoveMovieFromListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5532FFB63F3005ACA43 /* RemoveMovieFromListUseCase.swift */; };
+		564EB55B3004C77D005ACA43 /* APIEndpoints+Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB55A3004C778005ACA43 /* APIEndpoints+Authentication.swift */; };
+		564EB55D3004C78E005ACA43 /* APIEndpoints+Lists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB55C3004C78A005ACA43 /* APIEndpoints+Lists.swift */; };
+		564EB5623004CBD1005ACA43 /* APIEndpoints+Genres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5613004CBCB005ACA43 /* APIEndpoints+Genres.swift */; };
 		567765092FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567765082FDF971400E6B1FE /* AuthenticationStorage.swift */; };
 		5677650A2FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567765082FDF971400E6B1FE /* AuthenticationStorage.swift */; };
 		5677650C2FDF97B000E6B1FE /* UserDefaultsAuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */; };
@@ -308,6 +311,9 @@
 		564EB5482FFA4B34005ACA43 /* AddMovieToListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMovieToListUseCase.swift; sourceTree = "<group>"; };
 		564EB54B2FFA52CC005ACA43 /* SelectListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectListViewModel.swift; sourceTree = "<group>"; };
 		564EB5532FFB63F3005ACA43 /* RemoveMovieFromListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveMovieFromListUseCase.swift; sourceTree = "<group>"; };
+		564EB55A3004C778005ACA43 /* APIEndpoints+Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIEndpoints+Authentication.swift"; sourceTree = "<group>"; };
+		564EB55C3004C78A005ACA43 /* APIEndpoints+Lists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIEndpoints+Lists.swift"; sourceTree = "<group>"; };
+		564EB5613004CBCB005ACA43 /* APIEndpoints+Genres.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIEndpoints+Genres.swift"; sourceTree = "<group>"; };
 		567765082FDF971400E6B1FE /* AuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStorage.swift; sourceTree = "<group>"; };
 		5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsAuthenticationStorage.swift; sourceTree = "<group>"; };
 		5677650D2FDFA2A300E6B1FE /* DefaultAuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthenticationRepository.swift; sourceTree = "<group>"; };
@@ -695,6 +701,9 @@
 		1FA533E0201EF58F00747E55 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				564EB55C3004C78A005ACA43 /* APIEndpoints+Lists.swift */,
+				564EB55A3004C778005ACA43 /* APIEndpoints+Authentication.swift */,
+				564EB5613004CBCB005ACA43 /* APIEndpoints+Genres.swift */,
 				1FA533E1201EF5F700747E55 /* APIEndpoints.swift */,
 				1F8D092D2301C2F20061FB6F /* DataMapping */,
 			);
@@ -1268,12 +1277,15 @@
 				5677650E2FDFA2AB00E6B1FE /* DefaultAuthenticationRepository.swift in Sources */,
 				6C0F72E229CF0F5B0005020A /* DispatchQueueType.swift in Sources */,
 				564EB5362FF688B8005ACA43 /* FetchAccountUseCase.swift in Sources */,
+				564EB55D3004C78E005ACA43 /* APIEndpoints+Lists.swift in Sources */,
 				564EB5342FF68694005ACA43 /* Account.swift in Sources */,
 				564EB5472FF9B29B005ACA43 /* SelectListTableViewCell.swift in Sources */,
 				564EB5412FF9A0E1005ACA43 /* SelectListViewController.swift in Sources */,
 				564EB54D2FFA537B005ACA43 /* SelectListViewModel.swift in Sources */,
 				1FFFC833221B0041007D99D2 /* DefaultPosterImagesRepository.swift in Sources */,
 				FC740818216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift in Sources */,
+				564EB55B3004C77D005ACA43 /* APIEndpoints+Authentication.swift in Sources */,
+				564EB5623004CBD1005ACA43 /* APIEndpoints+Genres.swift in Sources */,
 				1FCE68A1222C873A00CC3074 /* MoviesSceneDIContainer.swift in Sources */,
 				564EB43E2FF13A68005ACA43 /* ListsRepository.swift in Sources */,
 				CA4979EB2FD05BF800657F9A /* CompositeCancellable.swift in Sources */,
