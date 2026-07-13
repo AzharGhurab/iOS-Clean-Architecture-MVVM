@@ -13,6 +13,7 @@ struct ListsViewModelActions {
 
 protocol ListsViewModelInput {
     func viewDidLoad()
+    func refresh()
     func didSelectList(at index: Int)
     func deleteList(at index: Int)
 }
@@ -65,6 +66,13 @@ final class DefaultListsViewModel: ListsViewModel {
     }
 
     func viewDidLoad() {
+        loadLists()
+    }
+
+    func refresh() {
+        loadLists()
+    }
+    private func loadLists() {
         loading.value = true
         fetchListsTask = fetchListsUseCase.execute(
             requestValue: FetchListsUseCaseRequestValue(accountId: accountId)

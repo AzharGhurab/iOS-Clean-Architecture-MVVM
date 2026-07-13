@@ -28,6 +28,8 @@ protocol ListsFlowCoordinatorDependencies {
 final class ListsFlowCoordinator {
 
     private weak var navigationController: UINavigationController?
+    private weak var listsViewController: ListsViewController?
+
     private let dependencies: ListsFlowCoordinatorDependencies
     private let accountId: Int
 
@@ -43,6 +45,8 @@ final class ListsFlowCoordinator {
 
     func start() {
         let viewController = makeRootViewController()
+
+        listsViewController = viewController
 
         navigationController?.pushViewController(
             viewController,
@@ -67,12 +71,14 @@ final class ListsFlowCoordinator {
     }
 
     private func showCreateList() {
+        let actions = CreateListViewModelActions(
+            didCreateList: { [weak self] in
+                self?.didCreateList()
+            }
+        )
+
         let viewController = dependencies.makeCreateListViewController(
-            actions: CreateListViewModelActions(
-                didCreateList: { [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
-                }
-            )
+            actions: actions
         )
 
         navigationController?.pushViewController(
@@ -80,6 +86,15 @@ final class ListsFlowCoordinator {
             animated: true
         )
     }
+
+    private func didCreateList() {
+        navigationController?.popViewController(
+            animated: true
+        )
+
+        listsViewController?.refreshLists()
+    }
+
     private func showListDetails(list: MovieList) {
         let viewController = dependencies.makeListDetailsViewController(
             listId: list.id,

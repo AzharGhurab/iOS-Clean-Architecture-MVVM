@@ -24,7 +24,7 @@
                         </constraints>
                     </imageView>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="h50-qt-hXy">
-                        <rect key="frame" x="102" y="21.666666666666671" width="41.333333333333343" height="69"/>
+                        <rect key="frame" x="102" y="9.3333333333333357" width="41.333333333333343" height="93.333333333333314"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TtL-N7-YjY" userLabel="Label">
                                 <rect key="frame" x="0.0" y="0.0" width="41.333333333333336" height="20.333333333333332"/>
@@ -32,14 +32,20 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1H3-aO-s3o">
+                                <rect key="frame" x="0.0" y="24.333333333333329" width="41.333333333333336" height="20.333333333333329"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nU-H7-4Ri" userLabel="Label">
-                                <rect key="frame" x="0.0" y="24.333333333333336" width="41.333333333333336" height="20.333333333333336"/>
+                                <rect key="frame" x="0.0" y="48.666666666666664" width="41.333333333333336" height="20.333333333333336"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G2l-Bp-NqJ" userLabel="Label">
-                                <rect key="frame" x="0.0" y="48.666666666666657" width="41.333333333333336" height="20.333333333333329"/>
+                                <rect key="frame" x="0.0" y="73" width="41.333333333333336" height="20.333333333333329"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -65,6 +71,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="countLabel" destination="9nU-H7-4Ri" id="5R6-mg-Vd6"/>
+                <outlet property="descriptionLabel" destination="1H3-aO-s3o" id="IDd-UQ-Teb"/>
                 <outlet property="moreLabel" destination="G2l-Bp-NqJ" id="kNk-Uy-9ab"/>
                 <outlet property="posterImageView" destination="DCH-bd-ADg" id="Drb-NQ-prr"/>
                 <outlet property="titleLabel" destination="TtL-N7-YjY" id="XWa-L0-QXR"/>

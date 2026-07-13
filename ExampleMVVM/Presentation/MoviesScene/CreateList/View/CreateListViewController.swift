@@ -36,9 +36,20 @@ final class CreateListViewController: UIViewController {
     }
 
     @IBAction private func createButtonTapped(_ sender: UIButton) {
+        let name = nameTextField.text ?? ""
+
+        let description: String
+
+        if descriptionTextView.text == "Enter list description" {
+            description = ""
+        } else {
+            description = descriptionTextView.text
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
         viewModel.createList(
-            name: nameTextField.text ?? "",
-            description: descriptionTextView.text == "Enter list description" ? "" : descriptionTextView.text
+            name: name,
+            description: description
         )
     }
 

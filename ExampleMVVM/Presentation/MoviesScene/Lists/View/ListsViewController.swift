@@ -35,15 +35,15 @@ final class ListsViewController: UIViewController, StoryboardInstantiable{
         setupNavigationBar()
         setupTableView()
         bind(to: viewModel)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        
         viewModel.viewDidLoad()
     }
     
     @objc private func addButtonTapped() {
         onCreateList?()
+    }
+    func refreshLists() {
+        viewModel.refresh()
     }
 }
 
@@ -111,6 +111,7 @@ extension ListsViewController: UITableViewDataSource {
         let item = viewModel.items.value[indexPath.row]
         cell.configure(
             title: item.name,
+            description: item.description,
             count: "\(item.itemCount) items",
             image: nil
         )

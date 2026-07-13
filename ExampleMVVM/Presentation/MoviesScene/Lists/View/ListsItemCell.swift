@@ -12,6 +12,7 @@ final class ListsItemCell: UITableViewCell {
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var countLabel: UILabel!
     @IBOutlet private weak var moreLabel: UILabel!
+    @IBOutlet private weak var descriptionLabel: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,10 +27,12 @@ final class ListsItemCell: UITableViewCell {
 
     func configure(
         title: String,
+        description: String,
         count: String,
         image: UIImage?
     ) {
         titleLabel.text = title
+        descriptionLabel.text = description
         countLabel.text = count
         posterImageView.image = image ?? UIImage(systemName: "photo")
         posterImageView.tintColor = .gray
