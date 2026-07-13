@@ -108,4 +108,44 @@ extension DefaultAuthenticationRepository: AuthenticationRepository {
 
         return task
     }
+    
+    func fetchAccount(
+        completion: @escaping (Result<Account, Error>) -> Void
+    ) -> Cancellable? {
+
+        guard let sessionId = storage.sessionId() else {
+            completion(.failure(NSError(
+                domain: "Authentication",
+                code: 401,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Session id is missing."
+                ]
+            )))
+            return nil
+        }
+
+        let endpoint = APIEndpoints.getAccountDetails(
+            sessionId: sessionId
+        )
+
+        let task = RepositoryTask()
+
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { [weak self] result in
+            switch result {
+
+            case .success(let responseDTO):
+                let account = responseDTO.toDomain()
+                self?.storage.save(accountId: account.id)
+                completion(.success(account))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+
+        return task
+    }
 }

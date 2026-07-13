@@ -33,6 +33,7 @@ final class DefaultLoginViewModel: LoginViewModel {
     private let createSessionUseCase: CreateSessionUseCase
     private let authenticationStorage: AuthenticationStorage
     private let actions: LoginViewModelActions?
+    private let fetchAccountUseCase: FetchAccountUseCase
 
     private var authenticationTask: Cancellable? {
         willSet { authenticationTask?.cancel() }
@@ -42,12 +43,14 @@ final class DefaultLoginViewModel: LoginViewModel {
         createGuestSessionUseCase: CreateGuestSessionUseCase,
         createRequestTokenUseCase: CreateRequestTokenUseCase,
         createSessionUseCase: CreateSessionUseCase,
+        fetchAccountUseCase: FetchAccountUseCase,
         authenticationStorage: AuthenticationStorage,
         actions: LoginViewModelActions?
     ) {
         self.createGuestSessionUseCase = createGuestSessionUseCase
         self.createRequestTokenUseCase = createRequestTokenUseCase
         self.createSessionUseCase = createSessionUseCase
+        self.fetchAccountUseCase = fetchAccountUseCase
         self.authenticationStorage = authenticationStorage
         self.actions = actions
     }
@@ -91,8 +94,19 @@ final class DefaultLoginViewModel: LoginViewModel {
                 switch result {
                 case .success(let sessionId):
                     self?.authenticationStorage.save(sessionId: sessionId)
-                    self?.authenticationState.value = .loggedIn(sessionId: sessionId)
-                    self?.actions?.showProfile()
+
+                    self?.fetchAccountUseCase.execute { accountResult in
+                        DispatchQueue.main.async {
+                            switch accountResult {
+                            case .success:
+                                self?.authenticationState.value = .loggedIn(sessionId: sessionId)
+                                self?.actions?.showProfile()
+
+                            case .failure(let error):
+                                self?.authenticationState.value = .failed(error: error)
+                            }
+                        }
+                    }
 
                 case .failure(let error):
                     self?.authenticationState.value = .failed(error: error)

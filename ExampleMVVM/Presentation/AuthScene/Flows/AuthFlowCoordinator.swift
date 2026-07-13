@@ -12,6 +12,16 @@ protocol AuthFlowCoordinatorDependencies {
     func makeLoginViewModel(
         actions: LoginViewModelActions
     ) -> LoginViewModel
+
+    func makeProfileViewController(
+        actions: ProfileViewModelActions
+    ) -> ProfileViewController
+
+    func makeListsFlowCoordinator(
+        navigationController: UINavigationController,
+        accountId: Int
+    ) -> ListsFlowCoordinator
+    func makeFetchAccountUseCase() -> FetchAccountUseCase
 }
 
 final class AuthFlowCoordinator {
@@ -19,6 +29,7 @@ final class AuthFlowCoordinator {
     private weak var navigationController: UINavigationController?
     private let dependencies: AuthFlowCoordinatorDependencies
     private var loginViewModel: LoginViewModel?
+    private var listsFlowCoordinator: ListsFlowCoordinator?
 
     init(
         navigationController: UINavigationController,
@@ -35,6 +46,7 @@ final class AuthFlowCoordinator {
             showLogin()
         }
     }
+
     private func showLogin() {
         let actions = LoginViewModelActions(
             showProfile: { [weak self] in
@@ -52,6 +64,39 @@ final class AuthFlowCoordinator {
         navigationController?.setViewControllers([viewController], animated: false)
     }
 
+    private func showLists() {
+        guard let navigationController = navigationController else { return }
+
+        if let accountId = dependencies.authenticationStorage.accountId() {
+            let flow = dependencies.makeListsFlowCoordinator(
+                navigationController: navigationController,
+                accountId: accountId
+            )
+
+            listsFlowCoordinator = flow
+            flow.start()
+            return
+        }
+
+        dependencies.makeFetchAccountUseCase().execute { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let account):
+                    let flow = self?.dependencies.makeListsFlowCoordinator(
+                        navigationController: navigationController,
+                        accountId: account.id
+                    )
+
+                    self?.listsFlowCoordinator = flow
+                    flow?.start()
+
+                case .failure(let error):
+                    print(" fetch account error:", error.localizedDescription)
+                }
+            }
+        }
+    }
+
     private func showAuthorize(requestToken: String) {
         let viewController = AuthorizeViewController.create(
             requestToken: requestToken,
@@ -64,7 +109,22 @@ final class AuthFlowCoordinator {
     }
 
     private func showProfile() {
-        let profileViewController = ProfileViewController()
-        navigationController?.setViewControllers([profileViewController], animated: true)
+        let actions = ProfileViewModelActions(
+            showLogin: { [weak self] in
+                self?.showLogin()
+            },
+            showLists: { [weak self] in
+                self?.showLists()
+            }
+        )
+
+        let profileViewController = dependencies.makeProfileViewController(
+            actions: actions
+        )
+
+        navigationController?.setViewControllers(
+            [profileViewController],
+            animated: true
+        )
     }
 }

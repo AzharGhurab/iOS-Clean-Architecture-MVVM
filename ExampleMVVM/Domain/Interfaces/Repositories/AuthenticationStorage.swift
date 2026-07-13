@@ -16,4 +16,8 @@ protocol AuthenticationStorage {
 
     func clearSession()
     func clearGuestSession()
+    
+    func accountId() -> Int?
+    func save(accountId: Int)
+    func clearAccountId()
 }
