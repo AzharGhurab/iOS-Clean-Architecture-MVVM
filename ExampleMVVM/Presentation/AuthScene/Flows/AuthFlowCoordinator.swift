@@ -40,7 +40,10 @@ final class AuthFlowCoordinator {
     }
 
     func start() {
-        if dependencies.authenticationStorage.sessionId() != nil {
+        let sessionId = dependencies.authenticationStorage.sessionId()
+        let guestSessionId = dependencies.authenticationStorage.guestSessionId()
+
+        if sessionId != nil || guestSessionId != nil {
             showProfile()
         } else {
             showLogin()
@@ -67,6 +70,11 @@ final class AuthFlowCoordinator {
     private func showLists() {
         guard let navigationController = navigationController else { return }
 
+        if dependencies.authenticationStorage.guestSessionId() != nil {
+            showLogin()
+            return
+        }
+
         if let accountId = dependencies.authenticationStorage.accountId() {
             let flow = dependencies.makeListsFlowCoordinator(
                 navigationController: navigationController,
@@ -82,6 +90,10 @@ final class AuthFlowCoordinator {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let account):
+                    self?.dependencies.authenticationStorage.save(
+                        accountId: account.id
+                    )
+
                     let flow = self?.dependencies.makeListsFlowCoordinator(
                         navigationController: navigationController,
                         accountId: account.id

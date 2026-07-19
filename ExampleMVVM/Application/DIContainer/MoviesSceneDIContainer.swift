@@ -17,7 +17,7 @@ final class MoviesSceneDIContainer:
     lazy var moviesQueriesStorage: MoviesQueriesStorage = CoreDataMoviesQueriesStorage(maxStorageLimit: 10)
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
-    lazy var authenticationStorage: AuthenticationStorage = UserDefaultsAuthenticationStorage()
+    lazy var authenticationStorage: AuthenticationStorage = KeychainAuthenticationStorage()
     lazy var authenticationRepository: AuthenticationRepository =
         DefaultAuthenticationRepository(
             dataTransferService: dependencies.apiDataTransferService,

@@ -145,6 +145,9 @@
 		564EB55B3004C77D005ACA43 /* APIEndpoints+Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB55A3004C778005ACA43 /* APIEndpoints+Authentication.swift */; };
 		564EB55D3004C78E005ACA43 /* APIEndpoints+Lists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB55C3004C78A005ACA43 /* APIEndpoints+Lists.swift */; };
 		564EB5623004CBD1005ACA43 /* APIEndpoints+Genres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5613004CBCB005ACA43 /* APIEndpoints+Genres.swift */; };
+		564EB5B6300CB07A005ACA43 /* KeychainStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5B5300CB072005ACA43 /* KeychainStorage.swift */; };
+		564EB5B7300CB07A005ACA43 /* KeychainStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5B5300CB072005ACA43 /* KeychainStorage.swift */; };
+		564EB5B9300CB263005ACA43 /* KeychainAuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 564EB5B8300CB25E005ACA43 /* KeychainAuthenticationStorage.swift */; };
 		567765092FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567765082FDF971400E6B1FE /* AuthenticationStorage.swift */; };
 		5677650A2FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567765082FDF971400E6B1FE /* AuthenticationStorage.swift */; };
 		5677650C2FDF97B000E6B1FE /* UserDefaultsAuthenticationStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */; };
@@ -314,6 +317,8 @@
 		564EB55A3004C778005ACA43 /* APIEndpoints+Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIEndpoints+Authentication.swift"; sourceTree = "<group>"; };
 		564EB55C3004C78A005ACA43 /* APIEndpoints+Lists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIEndpoints+Lists.swift"; sourceTree = "<group>"; };
 		564EB5613004CBCB005ACA43 /* APIEndpoints+Genres.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIEndpoints+Genres.swift"; sourceTree = "<group>"; };
+		564EB5B5300CB072005ACA43 /* KeychainStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStorage.swift; sourceTree = "<group>"; };
+		564EB5B8300CB25E005ACA43 /* KeychainAuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainAuthenticationStorage.swift; sourceTree = "<group>"; };
 		567765082FDF971400E6B1FE /* AuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStorage.swift; sourceTree = "<group>"; };
 		5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsAuthenticationStorage.swift; sourceTree = "<group>"; };
 		5677650D2FDFA2A300E6B1FE /* DefaultAuthenticationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAuthenticationRepository.swift; sourceTree = "<group>"; };
@@ -540,6 +545,8 @@
 		1F9034DD2307461C00DEA4BD /* UserDefaultsStorage */ = {
 			isa = PBXGroup;
 			children = (
+				564EB5B8300CB25E005ACA43 /* KeychainAuthenticationStorage.swift */,
+				564EB5B5300CB072005ACA43 /* KeychainStorage.swift */,
 				5677650B2FDF97AB00E6B1FE /* UserDefaultsAuthenticationStorage.swift */,
 				56B631652FA7607300046E63 /* UserDefaultsMovieDetailsRepository.swift */,
 				FC740817216555C500FE52A5 /* UserDefaultsMoviesQueriesStorage.swift */,
@@ -1233,6 +1240,7 @@
 				1FC2C9632301FEC0001AE47E /* MovieQueryUDS+Mapping.swift in Sources */,
 				1FE49D90230AA7C200D1D42E /* MovieDetailsViewModel.swift in Sources */,
 				56B2B84C2FE8167B002D6F89 /* AuthenticationState.swift in Sources */,
+				564EB5B7300CB07A005ACA43 /* KeychainStorage.swift in Sources */,
 				564EB4402FF13B5D005ACA43 /* DefaultListsRepository.swift in Sources */,
 				1F794921247D869700552CC3 /* BlackStyleNavigationBarBehavior.swift in Sources */,
 				1F1FC48A22E3693100BCBA8D /* DataTransferService.swift in Sources */,
@@ -1272,6 +1280,7 @@
 				1FE49D85230AA7C200D1D42E /* MoviesQueriesTableViewController.swift in Sources */,
 				1F1CD656222368CA00B0143C /* AppConfigurations.swift in Sources */,
 				567765132FDFADA300E6B1FE /* CreateGuestSessionUseCase.swift in Sources */,
+				564EB5B9300CB263005ACA43 /* KeychainAuthenticationStorage.swift in Sources */,
 				567765192FDFADBA00E6B1FE /* CreateSessionUseCase.swift in Sources */,
 				1F474F2222356B1E0092DB4B /* Cancellable.swift in Sources */,
 				5677650E2FDFA2AB00E6B1FE /* DefaultAuthenticationRepository.swift in Sources */,
@@ -1355,6 +1364,7 @@
 				56B631692FAA27E100046E63 /* Genre.swift in Sources */,
 				564EB5332FF68694005ACA43 /* Account.swift in Sources */,
 				567765092FDF971800E6B1FE /* AuthenticationStorage.swift in Sources */,
+				564EB5B6300CB07A005ACA43 /* KeychainStorage.swift in Sources */,
 				567765142FDFADA300E6B1FE /* CreateGuestSessionUseCase.swift in Sources */,
 				1FE49D9D230AEC5D00D1D42E /* MoviesQueryListViewModel.swift in Sources */,
 				1F474F2A22356C7F0092DB4B /* Movie.swift in Sources */,
