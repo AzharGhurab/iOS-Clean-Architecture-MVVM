@@ -7,6 +7,7 @@ protocol MovieDetailsViewModelInput {
     func addToList(listId: Int)
     func updateAddedList(listId: Int?)
     func viewDidLoad()
+    func viewWillAppear()
 }
 
 protocol MovieDetailsViewModelOutput {
@@ -41,9 +42,17 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let fetchListsUseCase: FetchListsUseCase
     private let fetchListDetailsUseCase: FetchListDetailsUseCase
 
+    private let markAsFavoriteUseCase: MarkAsFavoriteUseCase
+    private let markAsWatchlistUseCase: MarkAsWatchlistUseCase
+    private let fetchMovieAccountStatesUseCase: FetchMovieAccountStatesUseCase
+
+    private var favoriteTask: Cancellable?
+    private var watchlistTask: Cancellable?
+    
     private var fetchAccountTask: Cancellable?
     private var fetchListsTask: Cancellable?
     private var fetchDetailsTasks: [Cancellable?] = []
+    private var fetchMovieAccountStatesTask: Cancellable?
     private var addedListId: Int?
     let error: Observable<String?> = Observable(nil)
     
@@ -64,9 +73,15 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         fetchAccountUseCase: FetchAccountUseCase,
         fetchListsUseCase: FetchListsUseCase,
         fetchListDetailsUseCase: FetchListDetailsUseCase,
+        markAsFavoriteUseCase: MarkAsFavoriteUseCase,
+        markAsWatchlistUseCase: MarkAsWatchlistUseCase,
+        fetchMovieAccountStatesUseCase: FetchMovieAccountStatesUseCase,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.movieId = movie.id
+        print("Movie ID:", movie.id)
+        print("Title:", movie.title ?? "")
+        print("Media Type:", movie.mediaType ?? "nil")
         self.title = movie.title ?? ""
         self.overview = movie.overview ?? ""
         self.posterImagePath = movie.posterPath
@@ -78,10 +93,19 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.fetchAccountUseCase = fetchAccountUseCase
         self.fetchListsUseCase = fetchListsUseCase
         self.fetchListDetailsUseCase = fetchListDetailsUseCase
+        self.markAsFavoriteUseCase = markAsFavoriteUseCase
+        self.markAsWatchlistUseCase = markAsWatchlistUseCase
+        self.fetchMovieAccountStatesUseCase = fetchMovieAccountStatesUseCase
         self.mainQueue = mainQueue
         self.rating = String(format: "%.1f", movie.rating ?? 0)
-        self.isFavorite = Observable(movieDetailsRepository.isFavorite(movieId: movieId))
-        self.isInWatchlist = Observable(movieDetailsRepository.isInWatchlist(movieId: movieId))
+
+        self.isFavorite = Observable(
+            movieDetailsRepository.isFavorite(movieId: movieId)
+        )
+
+        self.isInWatchlist = Observable(
+            movieDetailsRepository.isInWatchlist(movieId: movieId)
+        )
     }
 }
 
@@ -107,13 +131,113 @@ extension DefaultMovieDetailsViewModel {
         }
     }
     func toggleFavorite() {
-        movieDetailsRepository.toggleFavorite(movieId: movieId)
-        isFavorite.value = movieDetailsRepository.isFavorite(movieId: movieId)
+        let newFavoriteStatus = !isFavorite.value
+
+        favoriteTask = fetchAccountUseCase.execute { [weak self] result in
+            guard let self else { return }
+
+            switch result {
+            case .success(let account):
+                self.markAsFavorite(
+                    accountId: account.id,
+                    isFavorite: newFavoriteStatus
+                )
+
+            case .failure(let error):
+                self.mainQueue.async {
+                    self.error.value = error.localizedDescription
+                }
+            }
+        }
+    }
+    private func markAsFavorite(
+        accountId: Int,
+        isFavorite: Bool
+    ) {
+        guard let movieId = Int(movieId) else { return }
+
+        favoriteTask = markAsFavoriteUseCase.execute(
+            requestValue: MarkAsFavoriteUseCaseRequestValue(
+                accountId: accountId,
+                favoriteRequestDTO: FavoriteRequestDTO(
+                    mediaType: "movie",
+                    mediaId: movieId,
+                    favorite: isFavorite
+                )
+            )
+        ) { [weak self] result in
+            self?.mainQueue.async {
+                guard let self else { return }
+
+                switch result {
+                case .success:
+                    self.movieDetailsRepository.setFavorite(
+                        movieId: self.movieId,
+                        isFavorite: isFavorite
+                    )
+
+                    self.isFavorite.value = isFavorite
+
+                case .failure(let error):
+                    self.error.value = error.localizedDescription
+                }
+            }
+        }
     }
 
     func toggleWatchlist() {
-        movieDetailsRepository.toggleWatchlist(movieId: movieId)
-        isInWatchlist.value = movieDetailsRepository.isInWatchlist(movieId: movieId)
+        let newWatchlistStatus = !isInWatchlist.value
+
+        watchlistTask = fetchAccountUseCase.execute { [weak self] result in
+            guard let self else { return }
+
+            switch result {
+            case .success(let account):
+                self.markAsWatchlist(
+                    accountId: account.id,
+                    isInWatchlist: newWatchlistStatus
+                )
+
+            case .failure(let error):
+                self.mainQueue.async {
+                    self.error.value = error.localizedDescription
+                }
+            }
+        }
+    }
+    private func markAsWatchlist(
+        accountId: Int,
+        isInWatchlist: Bool
+    ) {
+        guard let movieId = Int(movieId) else { return }
+
+        watchlistTask = markAsWatchlistUseCase.execute(
+            requestValue: MarkAsWatchlistUseCaseRequestValue(
+                accountId: accountId,
+                watchlistRequestDTO: WatchlistRequestDTO(
+                    mediaType: "movie",
+                    mediaId: movieId,
+                    watchlist: isInWatchlist
+                )
+            )
+        ) { [weak self] result in
+            self?.mainQueue.async {
+                guard let self else { return }
+
+                switch result {
+                case .success:
+                    self.movieDetailsRepository.setWatchlist(
+                        movieId: self.movieId,
+                        isInWatchlist: isInWatchlist
+                    )
+
+                    self.isInWatchlist.value = isInWatchlist
+
+                case .failure(let error):
+                    self.error.value = error.localizedDescription
+                }
+            }
+        }
     }
     func addToList(listId: Int) {
         guard let currentListId = addedListId else {
@@ -129,6 +253,9 @@ extension DefaultMovieDetailsViewModel {
                 to: listId
             )
         }
+    }
+    func viewWillAppear() {
+        fetchMovieAccountStates()
     }
     private func addMovie(to listId: Int) {
         addMovieToListUseCase.execute(
@@ -198,13 +325,17 @@ extension DefaultMovieDetailsViewModel {
         isAddedToList.value = listId != nil
     }
     func viewDidLoad() {
+        fetchMovieAccountStates()
+
         fetchAccountTask = fetchAccountUseCase.execute { [weak self] result in
             switch result {
             case .success(let account):
                 self?.checkMovieListStatus(accountId: account.id)
 
             case .failure(let error):
-                self?.error.value = error.localizedDescription
+                self?.mainQueue.async {
+                    self?.error.value = error.localizedDescription
+                }
             }
         }
     }
@@ -250,5 +381,36 @@ extension DefaultMovieDetailsViewModel {
 
             fetchDetailsTasks.append(task)
         }
+    }
+    private func fetchMovieAccountStates() {
+        fetchMovieAccountStatesTask =
+            fetchMovieAccountStatesUseCase.execute(
+                requestValue: FetchMovieAccountStatesUseCaseRequestValue(
+                    movieId: movieId
+                )
+            ) { [weak self] result in
+                guard let self else { return }
+
+                self.mainQueue.async {
+                    switch result {
+                    case .success(let states):
+                        self.isFavorite.value = states.isFavorite
+                        self.isInWatchlist.value = states.isInWatchlist
+
+                        self.movieDetailsRepository.setFavorite(
+                            movieId: self.movieId,
+                            isFavorite: states.isFavorite
+                        )
+
+                        self.movieDetailsRepository.setWatchlist(
+                            movieId: self.movieId,
+                            isInWatchlist: states.isInWatchlist
+                        )
+
+                    case .failure(let error):
+                        self.error.value = error.localizedDescription
+                    }
+                }
+            }
     }
 }

@@ -21,6 +21,10 @@ protocol AuthFlowCoordinatorDependencies {
         navigationController: UINavigationController,
         accountId: Int
     ) -> ListsFlowCoordinator
+    
+    func makeMovieSelectionViewController(
+        type: MovieSelectionType
+    ) -> MovieSelectionViewController
     func makeFetchAccountUseCase() -> FetchAccountUseCase
 }
 
@@ -108,6 +112,28 @@ final class AuthFlowCoordinator {
             }
         }
     }
+    private func showFavorites() {
+        let viewController = dependencies.makeMovieSelectionViewController(
+            type: .favorites
+        )
+
+        navigationController?.pushViewController(
+            viewController,
+            animated: true
+        )
+    }
+
+    private func showWatchlist() {
+        let viewController = dependencies.makeMovieSelectionViewController(
+            type: .watchlist
+        )
+
+        navigationController?.pushViewController(
+            viewController,
+            animated: true
+        )
+    }
+
 
     private func showAuthorize(requestToken: String) {
         let viewController = AuthorizeViewController.create(
@@ -127,6 +153,15 @@ final class AuthFlowCoordinator {
             },
             showLists: { [weak self] in
                 self?.showLists()
+            },
+            showFavorites: { [weak self] in
+                self?.showFavorites()
+            },
+            showWatchlist: { [weak self] in
+                self?.showWatchlist()
+            },
+            showLoggedOut: { [weak self] in
+                self?.showLogin()
             }
         )
 

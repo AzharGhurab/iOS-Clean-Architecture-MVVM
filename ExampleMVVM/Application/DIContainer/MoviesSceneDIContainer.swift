@@ -18,6 +18,30 @@ final class MoviesSceneDIContainer:
     lazy var moviesResponseCache: MoviesResponseStorage = CoreDataMoviesResponseStorage()
     lazy var movieDetailsRepository: MovieDetailsRepository = UserDefaultsMovieDetailsRepository()
     lazy var authenticationStorage: AuthenticationStorage = KeychainAuthenticationStorage()
+    lazy var profileRepository: ProfileRepository =
+        DefaultProfileRepository(
+            dataTransferService: dependencies.apiDataTransferService,
+            authenticationStorage: authenticationStorage
+        )
+    lazy var fetchFavoriteMoviesUseCase: FetchFavoriteMoviesUseCase =
+        DefaultFetchFavoriteMoviesUseCase(
+            profileRepository: profileRepository
+        )
+
+    lazy var fetchWatchlistMoviesUseCase: FetchWatchlistMoviesUseCase =
+        DefaultFetchWatchlistMoviesUseCase(
+            profileRepository: profileRepository
+        )
+
+    lazy var markAsFavoriteUseCase: MarkAsFavoriteUseCase =
+        DefaultMarkAsFavoriteUseCase(
+            profileRepository: profileRepository
+        )
+
+    lazy var markAsWatchlistUseCase: MarkAsWatchlistUseCase =
+        DefaultMarkAsWatchlistUseCase(
+            profileRepository: profileRepository
+        )
     lazy var authenticationRepository: AuthenticationRepository =
         DefaultAuthenticationRepository(
             dataTransferService: dependencies.apiDataTransferService,
@@ -95,6 +119,11 @@ final class MoviesSceneDIContainer:
             listsRepository: makeListsRepository()
         )
     }
+    func makeFetchMovieAccountStatesUseCase() -> FetchMovieAccountStatesUseCase {
+        DefaultFetchMovieAccountStatesUseCase(
+            profileRepository: profileRepository
+        )
+    }
     func makeAddMovieToListUseCase() -> AddMovieToListUseCase {
         DefaultAddMovieToListUseCase(
             listsRepository: makeListsRepository()
@@ -157,12 +186,39 @@ final class MoviesSceneDIContainer:
     // MARK: - Profile
 
     func makeProfileViewModel(actions: ProfileViewModelActions) -> ProfileViewModel {
-        DefaultProfileViewModel(actions: actions)
+        DefaultProfileViewModel(
+                authenticationStorage: authenticationStorage,
+                fetchAccountUseCase: makeFetchAccountUseCase(),
+                movieDetailsRepository: movieDetailsRepository,
+                actions: actions
+            )
     }
 
     func makeProfileViewController(actions: ProfileViewModelActions) -> ProfileViewController {
         ProfileViewController.create(
             with: makeProfileViewModel(actions: actions)
+        )
+    }
+    func makeMovieSelectionViewController(
+        type: MovieSelectionType
+    ) -> MovieSelectionViewController {
+
+        let viewModel = DefaultMovieSelectionViewModel(
+            type: type,
+            fetchListDetailsUseCase: makeFetchListDetailsUseCase(),
+            fetchFavoriteMoviesUseCase: fetchFavoriteMoviesUseCase,
+            fetchWatchlistMoviesUseCase: fetchWatchlistMoviesUseCase,
+            fetchAccountUseCase: makeFetchAccountUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+            markAsFavoriteUseCase: markAsFavoriteUseCase,
+            markAsWatchlistUseCase: markAsWatchlistUseCase,
+            movieDetailsRepository: movieDetailsRepository
+        )
+
+        return MovieSelectionViewController.create(
+            with: viewModel,
+            posterImagesRepository: makePosterImagesRepository(),
+            title: type.title
         )
     }
 
@@ -200,22 +256,25 @@ final class MoviesSceneDIContainer:
     
     // MARK: - List Details
 
-    func makeListDetailsViewModel(
-        listId: Int
-    ) -> ListDetailsViewModel {
-        DefaultListDetailsViewModel(
-            listId: listId,
-            fetchListDetailsUseCase: makeFetchListDetailsUseCase()
-        )
-    }
-
-    func makeListDetailsViewController(
+    func makeMovieSelectionViewController(
         listId: Int,
         title: String
-    ) -> ListDetailsViewController {
+    ) -> MovieSelectionViewController {
 
-        ListDetailsViewController.create(
-            with: makeListDetailsViewModel(listId: listId),
+        let viewModel = DefaultMovieSelectionViewModel(
+            type: .list(listId: listId),
+            fetchListDetailsUseCase: makeFetchListDetailsUseCase(),
+            fetchFavoriteMoviesUseCase: fetchFavoriteMoviesUseCase,
+            fetchWatchlistMoviesUseCase: fetchWatchlistMoviesUseCase,
+            fetchAccountUseCase: makeFetchAccountUseCase(),
+            removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
+            markAsFavoriteUseCase: markAsFavoriteUseCase,
+            markAsWatchlistUseCase: markAsWatchlistUseCase,
+            movieDetailsRepository: movieDetailsRepository
+        )
+
+        return MovieSelectionViewController.create(
+            with: viewModel,
             posterImagesRepository: makePosterImagesRepository(),
             title: title
         )
@@ -293,7 +352,10 @@ final class MoviesSceneDIContainer:
             removeMovieFromListUseCase: makeRemoveMovieFromListUseCase(),
             fetchAccountUseCase: makeFetchAccountUseCase(),
             fetchListsUseCase: makeFetchListsUseCase(),
-            fetchListDetailsUseCase: makeFetchListDetailsUseCase()
+            fetchListDetailsUseCase: makeFetchListDetailsUseCase(),
+            markAsFavoriteUseCase: markAsFavoriteUseCase,
+            markAsWatchlistUseCase: markAsWatchlistUseCase,
+            fetchMovieAccountStatesUseCase: makeFetchMovieAccountStatesUseCase()
         )
     }
     func makeSelectListViewModel(

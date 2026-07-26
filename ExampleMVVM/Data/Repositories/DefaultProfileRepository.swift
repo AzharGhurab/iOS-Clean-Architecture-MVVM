@@ -1,13 +1,13 @@
 //
-//  DefaultListsRepository.swift
+//  DefaultProfileRepository.swift
 //  ExampleMVVM
 //
-//  Created by Azhar Ghurab on 13/01/1448 AH.
+//  Created by Azhar Ghurab on 06/02/1448 AH.
 //
 
 import Foundation
 
-private enum AuthenticationError: LocalizedError {
+private enum ProfileAuthenticationError: LocalizedError {
     case missingSessionId
 
     var errorDescription: String? {
@@ -15,7 +15,7 @@ private enum AuthenticationError: LocalizedError {
     }
 }
 
-final class DefaultListsRepository {
+final class DefaultProfileRepository {
 
     private let dataTransferService: DataTransferService
     private let backgroundQueue: DataTransferDispatchQueue
@@ -24,34 +24,37 @@ final class DefaultListsRepository {
     init(
         dataTransferService: DataTransferService,
         authenticationStorage: AuthenticationStorage,
-        backgroundQueue: DataTransferDispatchQueue = DispatchQueue.global(qos: .userInitiated)
+        backgroundQueue: DataTransferDispatchQueue = DispatchQueue.global(
+            qos: .userInitiated
+        )
     ) {
         self.dataTransferService = dataTransferService
-        self.backgroundQueue = backgroundQueue
         self.authenticationStorage = authenticationStorage
+        self.backgroundQueue = backgroundQueue
     }
 }
 
 // MARK: - Private
 
-private extension DefaultListsRepository {
+private extension DefaultProfileRepository {
 
     func validSessionId() throws -> String {
         guard let sessionId = authenticationStorage.sessionId() else {
-            throw AuthenticationError.missingSessionId
+            throw ProfileAuthenticationError.missingSessionId
         }
 
         return sessionId
     }
 }
 
-// MARK: - ListsRepository
+// MARK: - ProfileRepository
 
-extension DefaultListsRepository: ListsRepository {
+extension DefaultProfileRepository: ProfileRepository {
 
-    func fetchLists(
+    func fetchFavoriteMovies(
         accountId: Int,
-        completion: @escaping (Result<[MovieList], Error>) -> Void
+        requestValue: MoviesListRequestDTO,
+        completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
 
         let sessionId: String
@@ -63,9 +66,10 @@ extension DefaultListsRepository: ListsRepository {
             return nil
         }
 
-        let endpoint = APIEndpoints.getLists(
+        let endpoint = APIEndpoints.getFavoriteMovies(
             accountId: accountId,
-            sessionId: sessionId
+            sessionId: sessionId,
+            requestDTO: requestValue
         )
 
         let task = RepositoryTask()
@@ -76,7 +80,7 @@ extension DefaultListsRepository: ListsRepository {
         ) { result in
             switch result {
             case .success(let responseDTO):
-                completion(.success(responseDTO.results.map { $0.toDomain() }))
+                completion(.success(responseDTO.toDomain()))
 
             case .failure(let error):
                 completion(.failure(error))
@@ -86,10 +90,10 @@ extension DefaultListsRepository: ListsRepository {
         return task
     }
 
-    func createList(
-        name: String,
-        description: String,
-        completion: @escaping (Result<Void, Error>) -> Void
+    func fetchWatchlistMovies(
+        accountId: Int,
+        requestValue: MoviesListRequestDTO,
+        completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
 
         let sessionId: String
@@ -101,41 +105,12 @@ extension DefaultListsRepository: ListsRepository {
             return nil
         }
 
-        let requestDTO = CreateListRequestDTO(
-            name: name,
-            description: description,
-            language: "en"
+        let endpoint = APIEndpoints.getWatchlistMovies(
+            accountId: accountId,
+            sessionId: sessionId,
+            requestDTO: requestValue
         )
 
-        let endpoint = APIEndpoints.createList(
-            requestDTO: requestDTO,
-            sessionId: sessionId
-        )
-
-        let task = RepositoryTask()
-
-        task.networkTask = dataTransferService.request(
-            with: endpoint,
-            on: backgroundQueue
-        ) { result in
-            switch result {
-            case .success:
-                completion(.success(()))
-
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-
-        return task
-    }
-
-    func fetchListDetails(
-        listId: Int,
-        completion: @escaping (Result<[MovieSelectionMovie], Error>) -> Void
-    ) -> Cancellable? {
-
-        let endpoint = APIEndpoints.getListDetails(listId: listId)
         let task = RepositoryTask()
 
         task.networkTask = dataTransferService.request(
@@ -144,7 +119,7 @@ extension DefaultListsRepository: ListsRepository {
         ) { result in
             switch result {
             case .success(let responseDTO):
-                completion(.success(responseDTO.items.map { $0.toDomain() }))
+                completion(.success(responseDTO.toDomain()))
 
             case .failure(let error):
                 completion(.failure(error))
@@ -154,8 +129,9 @@ extension DefaultListsRepository: ListsRepository {
         return task
     }
 
-    func deleteList(
-        listId: Int,
+    func markAsFavorite(
+        accountId: Int,
+        requestValue: FavoriteRequestDTO,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
@@ -168,48 +144,10 @@ extension DefaultListsRepository: ListsRepository {
             return nil
         }
 
-        let endpoint = APIEndpoints.deleteList(
-            listId: listId,
-            sessionId: sessionId
-        )
-
-        let task = RepositoryTask()
-
-        task.networkTask = dataTransferService.request(
-            with: endpoint,
-            on: backgroundQueue
-        ) { result in
-            switch result {
-            case .success:
-                completion(.success(()))
-
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-
-        return task
-    }
-
-    func addMovieToList(
-        listId: Int,
-        movieId: String,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) -> Cancellable? {
-
-        let sessionId: String
-
-        do {
-            sessionId = try validSessionId()
-        } catch {
-            completion(.failure(error))
-            return nil
-        }
-
-        let endpoint = APIEndpoints.addMovieToList(
-            listId: listId,
-            movieId: movieId,
-            sessionId: sessionId
+        let endpoint = APIEndpoints.markAsFavorite(
+            accountId: accountId,
+            sessionId: sessionId,
+            requestDTO: requestValue
         )
 
         let task = RepositoryTask()
@@ -227,7 +165,8 @@ extension DefaultListsRepository: ListsRepository {
                         domain: "TMDB",
                         code: responseDTO.statusCode ?? 0,
                         userInfo: [
-                            NSLocalizedDescriptionKey: responseDTO.statusMessage ?? "Unknown error"
+                            NSLocalizedDescriptionKey:
+                                responseDTO.statusMessage ?? "Unknown error"
                         ]
                     )
 
@@ -241,9 +180,10 @@ extension DefaultListsRepository: ListsRepository {
 
         return task
     }
-    func removeMovieFromList(
-        listId: Int,
-        movieId: String,
+
+    func markAsWatchlist(
+        accountId: Int,
+        requestValue: WatchlistRequestDTO,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
@@ -256,10 +196,10 @@ extension DefaultListsRepository: ListsRepository {
             return nil
         }
 
-        let endpoint = APIEndpoints.removeMovieFromList(
-            listId: listId,
-            movieId: movieId,
-            sessionId: sessionId
+        let endpoint = APIEndpoints.markAsWatchlist(
+            accountId: accountId,
+            sessionId: sessionId,
+            requestDTO: requestValue
         )
 
         let task = RepositoryTask()
@@ -277,12 +217,52 @@ extension DefaultListsRepository: ListsRepository {
                         domain: "TMDB",
                         code: responseDTO.statusCode ?? 0,
                         userInfo: [
-                            NSLocalizedDescriptionKey: responseDTO.statusMessage ?? "Unknown error"
+                            NSLocalizedDescriptionKey:
+                                responseDTO.statusMessage ?? "Unknown error"
                         ]
                     )
 
                     completion(.failure(error))
                 }
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+
+        return task
+    }
+    
+    func fetchMovieAccountStates(
+        movieId: String,
+        completion: @escaping (
+            Result<MovieAccountStates, Error>
+        ) -> Void
+    ) -> Cancellable? {
+
+        let sessionId: String
+
+        do {
+            sessionId = try validSessionId()
+        } catch {
+            completion(.failure(error))
+            return nil
+        }
+
+        let endpoint = APIEndpoints.getMovieAccountStates(
+            movieId: movieId,
+            sessionId: sessionId
+        )
+
+        let task = RepositoryTask()
+
+        task.networkTask = dataTransferService.request(
+            with: endpoint,
+            on: backgroundQueue
+        ) { result in
+            switch result {
+            case .success(let responseDTO):
+                completion(.success(responseDTO.toDomain()))
 
             case .failure(let error):
                 completion(.failure(error))

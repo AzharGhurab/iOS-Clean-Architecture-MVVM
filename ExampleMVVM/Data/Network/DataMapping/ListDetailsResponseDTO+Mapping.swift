@@ -8,8 +8,8 @@
 import Foundation
 
 extension ListMovieDTO {
-    func toDomain() -> ListDetailsMovie {
-        ListDetailsMovie(
+    func toDomain() -> MovieSelectionMovie {
+        MovieSelectionMovie(
             id: id,
             title: title ?? name ?? "Unknown",
             posterPath: posterPath

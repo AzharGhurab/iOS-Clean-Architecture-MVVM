@@ -19,10 +19,10 @@ protocol ListsFlowCoordinatorDependencies {
     ) -> CreateListViewController
     
 
-    func makeListDetailsViewController(
+    func makeMovieSelectionViewController(
         listId: Int,
         title: String
-    ) -> ListDetailsViewController
+    ) -> MovieSelectionViewController
 }
 
 final class ListsFlowCoordinator {
@@ -96,7 +96,7 @@ final class ListsFlowCoordinator {
     }
 
     private func showListDetails(list: MovieList) {
-        let viewController = dependencies.makeListDetailsViewController(
+        let viewController = dependencies.makeMovieSelectionViewController(
             listId: list.id,
             title: list.name
         )
