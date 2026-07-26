@@ -79,9 +79,6 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.movieId = movie.id
-        print("Movie ID:", movie.id)
-        print("Title:", movie.title ?? "")
-        print("Media Type:", movie.mediaType ?? "nil")
         self.title = movie.title ?? ""
         self.overview = movie.overview ?? ""
         self.posterImagePath = movie.posterPath
