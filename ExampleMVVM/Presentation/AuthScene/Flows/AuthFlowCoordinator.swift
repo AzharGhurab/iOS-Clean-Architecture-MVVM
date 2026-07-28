@@ -100,8 +100,8 @@ final class AuthFlowCoordinator {
     private func showAuthorize(requestToken: String) {
         let viewController = AuthorizeViewController.create(
             requestToken: requestToken,
-            onAuthorizationCompleted: { [weak self] requestToken in
-                self?.loginViewModel?.createSession(requestToken: requestToken)
+            onAuthorizationCompleted: { [weak self] requestToken , completion  in
+                self?.loginViewModel?.createSession(requestToken: requestToken , completion: completion)
             }
         )
 
