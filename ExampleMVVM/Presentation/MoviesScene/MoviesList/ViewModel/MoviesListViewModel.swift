@@ -45,6 +45,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let fetchGenresUseCase: FetchGenresUseCase
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
+    private var displayedMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
     var currentPage: Int = 0
     var totalPageCount: Int = 1
@@ -90,14 +91,16 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         pages = pages
             .filter { $0.page != moviesPage.page }
         + [moviesPage]
-        self.allMovies = pages.movies
-        items.value = pages.movies.map(MoviesListItemViewModel.init)
+        allMovies = pages.movies
+        displayedMovies = allMovies
+        items.value = displayedMovies.map(MoviesListItemViewModel.init)
     }
     
     private func resetPages() {
         currentPage = 0
         totalPageCount = 1
         pages.removeAll()
+        displayedMovies.removeAll()
         items.value.removeAll()
     }
     
@@ -190,22 +193,27 @@ extension DefaultMoviesListViewModel {
     }
 
     func didSelectItem(at index: Int) {
-        actions?.showMovieDetails(pages.movies[index])
+        guard displayedMovies.indices.contains(index) else
+        {
+            return
+        }
+        actions?.showMovieDetails(displayedMovies[index])
     }
     func didSelectGenre(at index: Int) {
 
         if index == 0 {
-            items.value = allMovies.map(MoviesListItemViewModel.init)
+            displayedMovies = allMovies
+            items.value = displayedMovies.map(MoviesListItemViewModel.init)
             return
         }
 
         let selectedGenre = genres.value[index - 1]
 
-        let filteredMovies = allMovies.filter {
+         displayedMovies = allMovies.filter {
             $0.genreIds?.contains(selectedGenre.id) ?? false
         }
 
-        items.value = filteredMovies.map(MoviesListItemViewModel.init)
+        items.value = displayedMovies.map(MoviesListItemViewModel.init)
     }
 }
 
