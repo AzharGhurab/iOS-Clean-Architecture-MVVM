@@ -134,6 +134,7 @@ extension MoviesListViewController {
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.searchBar.frame = searchBarContainer.bounds
         searchBarContainer.addSubview(searchController.searchBar)
+        searchController.searchBar.searchTextField.clearButtonMode = .never
         definesPresentationContext = true
         if #available(iOS 13.0, *) {
             searchController.searchBar.searchTextField.accessibilityIdentifier = AccessibilityIdentifier.searchField

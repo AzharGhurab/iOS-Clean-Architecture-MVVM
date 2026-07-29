@@ -165,8 +165,7 @@ extension DefaultMoviesListViewModel {
     
     func viewDidLoad() {
         loadGenres()
-        update(movieQuery: MovieQuery(query: "movie"))
-          query.value = ""
+        defaultSearchState()
     }
     
     func didLoadNextPage() {
@@ -182,6 +181,12 @@ extension DefaultMoviesListViewModel {
 
     func didCancelSearch() {
         moviesLoadTask?.cancel()
+        defaultSearchState()
+    }
+    
+    func defaultSearchState(){
+        update(movieQuery: MovieQuery(query: "movie"))
+        query.value = ""
     }
 
     func showQueriesSuggestions() {
