@@ -48,6 +48,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     private var popularMovies: [Movie] = []
+    private var selectedGenreId: Int?
     private var displayedMovies: [Movie] = []
     let genres: Observable<[Genre]> = Observable([])
     var currentPage: Int = 0
@@ -97,8 +98,26 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
             .filter { $0.page != moviesPage.page }
         + [moviesPage]
         allMovies = pages.movies
-        displayedMovies = allMovies
-        items.value = displayedMovies.map(MoviesListItemViewModel.init)
+
+        if !isSearching {
+            popularMovies = allMovies
+        }
+
+        let moviesToDisplay = isSearching
+            ? allMovies
+            : popularMovies
+
+        if let selectedGenreId {
+            displayedMovies = moviesToDisplay.filter {
+                $0.genreIds?.contains(selectedGenreId) ?? false
+            }
+        } else {
+            displayedMovies = moviesToDisplay
+        }
+
+        items.value = displayedMovies.map(
+            MoviesListItemViewModel.init
+        )
     }
     
     private func resetPages() {
@@ -251,8 +270,14 @@ extension DefaultMoviesListViewModel {
         actions?.showMovieDetails(displayedMovies[index])
     }
     func didSelectGenre(at index: Int) {
-        var filteredMovies: [Movie] = []
+        let moviesToFilter = isSearching
+            ? allMovies
+            : popularMovies
+
         if index == 0 {
+            selectedGenreId = nil
+            displayedMovies = moviesToFilter
+
             items.value = displayedMovies.map(
                 MoviesListItemViewModel.init
             )
@@ -266,12 +291,13 @@ extension DefaultMoviesListViewModel {
         }
 
         let selectedGenre = genres.value[genreIndex]
+        selectedGenreId = selectedGenre.id
 
-        filteredMovies = displayedMovies.filter {
+        displayedMovies = moviesToFilter.filter {
             $0.genreIds?.contains(selectedGenre.id) ?? false
         }
 
-        items.value = filteredMovies.map(
+        items.value = displayedMovies.map(
             MoviesListItemViewModel.init
         )
     }
