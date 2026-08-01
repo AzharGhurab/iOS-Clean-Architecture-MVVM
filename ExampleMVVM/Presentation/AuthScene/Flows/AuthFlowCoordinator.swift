@@ -13,19 +13,10 @@ protocol AuthFlowCoordinatorDependencies {
         actions: LoginViewModelActions
     ) -> LoginViewModel
 
-    func makeProfileViewController(
-        actions: ProfileViewModelActions
-    ) -> ProfileViewController
-
-    func makeListsFlowCoordinator(
+    func makeProfileFlowCoordinator(
         navigationController: UINavigationController,
-        accountId: Int
-    ) -> ListsFlowCoordinator
-    
-    func makeMovieSelectionViewController(
-        type: MovieSelectionType
-    ) -> MovieSelectionViewController
-    func makeFetchAccountUseCase() -> FetchAccountUseCase
+        onShowLogin: @escaping () -> Void
+    ) -> ProfileFlowCoordinator
 }
 
 final class AuthFlowCoordinator {
@@ -33,8 +24,7 @@ final class AuthFlowCoordinator {
     private weak var navigationController: UINavigationController?
     private let dependencies: AuthFlowCoordinatorDependencies
     private var loginViewModel: LoginViewModel?
-    private var listsFlowCoordinator: ListsFlowCoordinator?
-
+    private var profileFlowCoordinator: ProfileFlowCoordinator?
     init(
         navigationController: UINavigationController,
         dependencies: AuthFlowCoordinatorDependencies
@@ -48,130 +38,78 @@ final class AuthFlowCoordinator {
         let guestSessionId = dependencies.authenticationStorage.guestSessionId()
 
         if sessionId != nil || guestSessionId != nil {
-            showProfile()
+            showProfileFlow()
         } else {
             showLogin()
         }
     }
 
     private func showLogin() {
+        profileFlowCoordinator = nil
         let actions = LoginViewModelActions(
             showProfile: { [weak self] in
-                self?.showProfile()
+                self?.showProfileFlow()
             },
             showAuthorize: { [weak self] requestToken in
-                self?.showAuthorize(requestToken: requestToken)
+                self?.showAuthorize(
+                    requestToken: requestToken
+                )
             }
         )
 
-        let viewModel = dependencies.makeLoginViewModel(actions: actions)
-        self.loginViewModel = viewModel
-
-        let viewController = LoginViewController.create(with: viewModel)
-        navigationController?.setViewControllers([viewController], animated: false)
-    }
-
-    private func showLists() {
-        guard let navigationController = navigationController else { return }
-
-        if dependencies.authenticationStorage.guestSessionId() != nil {
-            showLogin()
-            return
-        }
-
-        if let accountId = dependencies.authenticationStorage.accountId() {
-            let flow = dependencies.makeListsFlowCoordinator(
-                navigationController: navigationController,
-                accountId: accountId
+        let viewModel =
+            dependencies.makeLoginViewModel(
+                actions: actions
             )
 
-            listsFlowCoordinator = flow
-            flow.start()
+        loginViewModel = viewModel
+
+        let viewController =
+            LoginViewController.create(
+                with: viewModel
+            )
+
+        navigationController?.setViewControllers(
+            [viewController],
+            animated: false
+        )
+    }
+
+    private func showAuthorize(
+        requestToken: String
+    ) {
+        let viewController =
+            AuthorizeViewController.create(
+                requestToken: requestToken,
+                onAuthorizationCompleted: {
+                    [weak self] requestToken in
+
+                    self?.loginViewModel?.createSession(
+                        requestToken: requestToken
+                    )
+                }
+            )
+
+        navigationController?.pushViewController(
+            viewController,
+            animated: true
+        )
+    }
+
+    private func showProfileFlow() {
+        guard let navigationController else {
             return
         }
 
-        dependencies.makeFetchAccountUseCase().execute { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let account):
-                    self?.dependencies.authenticationStorage.save(
-                        accountId: account.id
-                    )
-
-                    let flow = self?.dependencies.makeListsFlowCoordinator(
-                        navigationController: navigationController,
-                        accountId: account.id
-                    )
-
-                    self?.listsFlowCoordinator = flow
-                    flow?.start()
-
-                case .failure(let error):
-                    print(" fetch account error:", error.localizedDescription)
+        let flow =
+            dependencies.makeProfileFlowCoordinator(
+                navigationController: navigationController,
+                onShowLogin: { [weak self] in
+                    self?.showLogin()
                 }
-            }
-        }
-    }
-    private func showFavorites() {
-        let viewController = dependencies.makeMovieSelectionViewController(
-            type: .favorites
-        )
+            )
 
-        navigationController?.pushViewController(
-            viewController,
-            animated: true
-        )
-    }
-
-    private func showWatchlist() {
-        let viewController = dependencies.makeMovieSelectionViewController(
-            type: .watchlist
-        )
-
-        navigationController?.pushViewController(
-            viewController,
-            animated: true
-        )
-    }
-
-
-    private func showAuthorize(requestToken: String) {
-        let viewController = AuthorizeViewController.create(
-            requestToken: requestToken,
-            onAuthorizationCompleted: { [weak self] requestToken in
-                self?.loginViewModel?.createSession(requestToken: requestToken)
-            }
-        )
-
-        navigationController?.pushViewController(viewController, animated: true)
-    }
-
-    private func showProfile() {
-        let actions = ProfileViewModelActions(
-            showLogin: { [weak self] in
-                self?.showLogin()
-            },
-            showLists: { [weak self] in
-                self?.showLists()
-            },
-            showFavorites: { [weak self] in
-                self?.showFavorites()
-            },
-            showWatchlist: { [weak self] in
-                self?.showWatchlist()
-            },
-            showLoggedOut: { [weak self] in
-                self?.showLogin()
-            }
-        )
-
-        let profileViewController = dependencies.makeProfileViewController(
-            actions: actions
-        )
-
-        navigationController?.setViewControllers(
-            [profileViewController],
-            animated: true
-        )
+        profileFlowCoordinator = flow
+        flow.start()
     }
 }

@@ -4,6 +4,7 @@ final class MoviesSceneDIContainer:
     MoviesSearchFlowCoordinatorDependencies,
     MoviesHomeFlowCoordinatorDependencies,
     AuthFlowCoordinatorDependencies,
+    ProfileFlowCoordinatorDependencies,
     ListsFlowCoordinatorDependencies {
 
     struct Dependencies {
@@ -417,6 +418,17 @@ final class MoviesSceneDIContainer:
         AuthFlowCoordinator(
             navigationController: navigationController,
             dependencies: self
+        )
+    }
+    
+    func makeProfileFlowCoordinator(
+        navigationController: UINavigationController,
+        onShowLogin: @escaping () -> Void
+    ) -> ProfileFlowCoordinator {
+        ProfileFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self,
+            onShowLogin: onShowLogin
         )
     }
 
