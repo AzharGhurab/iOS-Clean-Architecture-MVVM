@@ -45,16 +45,63 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let markAsFavoriteUseCase: MarkAsFavoriteUseCase
     private let markAsWatchlistUseCase: MarkAsWatchlistUseCase
     private let fetchMovieAccountStatesUseCase: FetchMovieAccountStatesUseCase
-
-    private var favoriteTask: Cancellable?
-    private var watchlistTask: Cancellable?
     
-    private var fetchAccountTask: Cancellable?
-    private var fetchListsTask: Cancellable?
+    private var addToListTask: Cancellable? {
+        willSet {
+            addToListTask?.cancel()
+        }
+    }
+
+    private var fetchListsTask: Cancellable? {
+        willSet {
+            fetchListsTask?.cancel()
+        }
+    }
+
+    private var fetchMovieAccountStatesTask: Cancellable? {
+        willSet {
+            fetchMovieAccountStatesTask?.cancel()
+        }
+    }
     private var fetchDetailsTasks: [Cancellable?] = []
-    private var fetchMovieAccountStatesTask: Cancellable?
+    private var favoriteTask: Cancellable? {
+        willSet {
+            favoriteTask?.cancel()
+        }
+    }
+
+    private var watchlistTask: Cancellable? {
+        willSet {
+            watchlistTask?.cancel()
+        }
+    }
+    private var fetchAccountTask: Cancellable? {
+        willSet {
+            fetchAccountTask?.cancel()
+        }
+    }
+    private var removeFromListTask: Cancellable? {
+        willSet {
+            removeFromListTask?.cancel()
+        }
+    }
     private var addedListId: Int?
     let error: Observable<String?> = Observable(nil)
+    
+    deinit {
+        imageLoadTask?.cancel()
+        addToListTask?.cancel()
+        favoriteTask?.cancel()
+        watchlistTask?.cancel()
+        fetchAccountTask?.cancel()
+        fetchListsTask?.cancel()
+        removeFromListTask?.cancel()
+        fetchMovieAccountStatesTask?.cancel()
+
+        fetchDetailsTasks.forEach {
+            $0?.cancel()
+        }
+    }
     
 
     // MARK: - OUTPUT
@@ -255,7 +302,7 @@ extension DefaultMovieDetailsViewModel {
         fetchMovieAccountStates()
     }
     private func addMovie(to listId: Int) {
-        addMovieToListUseCase.execute(
+        addToListTask = addMovieToListUseCase.execute(
             requestValue: AddMovieToListUseCaseRequestValue(
                 listId: listId,
                 movieId: movieId
@@ -275,7 +322,7 @@ extension DefaultMovieDetailsViewModel {
     }
 
     private func removeMovie(from listId: Int) {
-        removeMovieFromListUseCase.execute(
+        removeFromListTask = removeMovieFromListUseCase.execute(
             requestValue: RemoveMovieFromListUseCaseRequestValue(
                 listId: listId,
                 movieId: movieId
@@ -298,7 +345,7 @@ extension DefaultMovieDetailsViewModel {
         from currentListId: Int,
         to newListId: Int
     ) {
-        removeMovieFromListUseCase.execute(
+        removeFromListTask = removeMovieFromListUseCase.execute(
             requestValue: RemoveMovieFromListUseCaseRequestValue(
                 listId: currentListId,
                 movieId: movieId
@@ -352,6 +399,7 @@ extension DefaultMovieDetailsViewModel {
     }
 
     private func checkMovieInLists(_ lists: [MovieList]) {
+        fetchDetailsTasks.forEach { $0?.cancel() }
         fetchDetailsTasks.removeAll()
 
         for list in lists {
