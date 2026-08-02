@@ -369,8 +369,6 @@ extension DefaultMovieDetailsViewModel {
         isAddedToList.value = listId != nil
     }
     func viewDidLoad() {
-        fetchMovieAccountStates()
-
         fetchAccountTask = fetchAccountUseCase.execute { [weak self] result in
             switch result {
             case .success(let account):
