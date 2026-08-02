@@ -23,7 +23,7 @@ protocol ListsRepository {
 
     func fetchListDetails(
         listId: Int,
-        completion: @escaping (Result<[ListDetailsMovie], Error>) -> Void
+        completion: @escaping (Result<[MovieSelectionMovie], Error>) -> Void
     ) -> Cancellable?
 
     @discardableResult

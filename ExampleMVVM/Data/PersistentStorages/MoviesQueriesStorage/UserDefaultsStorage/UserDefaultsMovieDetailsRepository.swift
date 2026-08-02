@@ -32,6 +32,36 @@ final class UserDefaultsMovieDetailsRepository: MovieDetailsRepository {
     func toggleWatchlist(movieId: String) {
         toggle(movieId: movieId, key: watchlistKey)
     }
+    func setFavorite(movieId: String,isFavorite: Bool) {
+        var movieIds = ids(forKey: favoritesKey)
+
+        if isFavorite {
+            if !movieIds.contains(movieId) {
+                movieIds.append(movieId)
+            }
+        } else {
+            movieIds.removeAll { $0 == movieId }
+        }
+
+        userDefaults.set(movieIds, forKey: favoritesKey)
+    }
+    func setWatchlist(movieId: String,isInWatchlist: Bool) {
+        var movieIds = ids(forKey: watchlistKey)
+        
+        if isInWatchlist {
+            if !movieIds.contains(movieId) {
+                movieIds.append(movieId)
+            }
+        } else {
+            movieIds.removeAll { $0 == movieId }
+        }
+        
+        userDefaults.set(movieIds, forKey: watchlistKey)
+    }
+        func clearCache() {
+            userDefaults.removeObject(forKey: favoritesKey)
+            userDefaults.removeObject(forKey: watchlistKey)
+        }
 
     private func ids(forKey key: String) -> [String] {
         userDefaults.array(forKey: key) as? [String] ?? []

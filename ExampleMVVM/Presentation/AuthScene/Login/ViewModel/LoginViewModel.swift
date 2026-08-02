@@ -60,8 +60,17 @@ final class DefaultLoginViewModel: LoginViewModel {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let guestSessionId):
-                    self?.authenticationStorage.save(guestSessionId: guestSessionId)
-                    self?.authenticationState.value = .guest(guestSessionId: guestSessionId)
+                    self?.authenticationStorage.clearSession()
+                    self?.authenticationStorage.clearAccountId()
+
+                    self?.authenticationStorage.save(
+                        guestSessionId: guestSessionId
+                    )
+
+                    self?.authenticationState.value = .guest(
+                        guestSessionId: guestSessionId
+                    )
+
                     self?.actions?.showProfile()
 
                 case .failure(let error):
@@ -93,8 +102,12 @@ final class DefaultLoginViewModel: LoginViewModel {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let sessionId):
-                    self?.authenticationStorage.save(sessionId: sessionId)
-                       completion(true)
+                    self?.authenticationStorage.clearGuestSession()
+
+                    self?.authenticationStorage.save(
+                        sessionId: sessionId
+                    )
+
                     self?.fetchAccountUseCase.execute { accountResult in
                         DispatchQueue.main.async {
                             switch accountResult {

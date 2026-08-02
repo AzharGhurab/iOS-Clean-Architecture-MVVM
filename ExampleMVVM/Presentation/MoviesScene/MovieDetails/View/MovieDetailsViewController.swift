@@ -30,6 +30,10 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
         bind(to: viewModel)
         viewModel.viewDidLoad()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.viewWillAppear()
+    }
     
     private func bind(to viewModel: MovieDetailsViewModel) {
         viewModel.posterImage.observe(on: self) { [weak self]in

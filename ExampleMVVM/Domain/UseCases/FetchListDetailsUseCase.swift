@@ -12,7 +12,7 @@ protocol FetchListDetailsUseCase {
     @discardableResult
     func execute(
         listId: Int,
-        completion: @escaping (Result<[ListDetailsMovie], Error>) -> Void
+        completion: @escaping (Result<[MovieSelectionMovie], Error>) -> Void
     ) -> Cancellable?
 }
 
@@ -27,7 +27,7 @@ final class DefaultFetchListDetailsUseCase: FetchListDetailsUseCase {
     @discardableResult
     func execute(
         listId: Int,
-        completion: @escaping (Result<[ListDetailsMovie], Error>) -> Void
+        completion: @escaping (Result<[MovieSelectionMovie], Error>) -> Void
     ) -> Cancellable? {
         listsRepository.fetchListDetails(
             listId: listId,
