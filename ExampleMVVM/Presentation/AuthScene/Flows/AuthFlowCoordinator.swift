@@ -75,27 +75,17 @@ final class AuthFlowCoordinator {
         )
     }
 
-    private func showAuthorize(
-        requestToken: String
-    ) {
-        let viewController =
-            AuthorizeViewController.create(
-                requestToken: requestToken,
-                onAuthorizationCompleted: {
-                    [weak self] requestToken in
-
-                    self?.loginViewModel?.createSession(
-                        requestToken: requestToken
-                    )
-                }
-            )
-
-        navigationController?.pushViewController(
-            viewController,
-            animated: true
+    private func showAuthorize(requestToken: String) {
+        let viewController = AuthorizeViewController.create(
+            requestToken: requestToken,
+            onAuthorizationCompleted: { [weak self] requestToken , completion  in
+                self?.loginViewModel?.createSession(requestToken: requestToken , completion: completion)
+            }
         )
-    }
 
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     private func showProfileFlow() {
         guard let navigationController else {
             return
