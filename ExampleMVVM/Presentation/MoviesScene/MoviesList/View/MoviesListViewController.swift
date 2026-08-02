@@ -153,9 +153,14 @@ extension MoviesListViewController: UISearchBarDelegate {
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        viewModel.didCancelSearch()
-    }
-}
+              searchBar.text = ""
+              searchController.isActive = false
+
+              selectedGenreIndex = 0
+              genresCollectionView.reloadData()
+          viewModel.didCancelSearch()
+      }
+  }
 
 extension MoviesListViewController: UISearchControllerDelegate {
     func willPresentSearchController(_ searchController: UISearchController) {
