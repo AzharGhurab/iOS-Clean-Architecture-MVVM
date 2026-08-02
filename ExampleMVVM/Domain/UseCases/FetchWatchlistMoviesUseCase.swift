@@ -27,9 +27,9 @@ final class DefaultFetchWatchlistMoviesUseCase: FetchWatchlistMoviesUseCase {
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
 
-        return profileRepository.fetchWatchlistMovies(
+        profileRepository.fetchWatchlistMovies(
             accountId: requestValue.accountId,
-            requestValue: requestValue.moviesListRequestDTO,
+            page: requestValue.page,
             completion: completion
         )
     }
@@ -37,5 +37,5 @@ final class DefaultFetchWatchlistMoviesUseCase: FetchWatchlistMoviesUseCase {
 
 struct FetchWatchlistMoviesUseCaseRequestValue {
     let accountId: Int
-    let moviesListRequestDTO: MoviesListRequestDTO
+    let page: Int
 }

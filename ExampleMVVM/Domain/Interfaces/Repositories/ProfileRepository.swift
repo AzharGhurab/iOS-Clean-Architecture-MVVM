@@ -9,28 +9,29 @@ protocol ProfileRepository {
 
     func fetchFavoriteMovies(
         accountId: Int,
-        requestValue: MoviesListRequestDTO,
+        page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
 
     func fetchWatchlistMovies(
         accountId: Int,
-        requestValue: MoviesListRequestDTO,
+        page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
 
     func markAsFavorite(
         accountId: Int,
-        requestValue: FavoriteRequestDTO,
+        movieId: Int,
+        isFavorite: Bool,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable?
 
     func markAsWatchlist(
         accountId: Int,
-        requestValue: WatchlistRequestDTO,
+        movieId: Int,
+        isInWatchlist: Bool,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable?
-    
     func fetchMovieAccountStates(
         movieId: String,
         completion: @escaping (Result<MovieAccountStates, Error>) -> Void

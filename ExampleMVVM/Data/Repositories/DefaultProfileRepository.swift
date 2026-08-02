@@ -53,7 +53,7 @@ extension DefaultProfileRepository: ProfileRepository {
 
     func fetchFavoriteMovies(
         accountId: Int,
-        requestValue: MoviesListRequestDTO,
+        page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
 
@@ -66,10 +66,11 @@ extension DefaultProfileRepository: ProfileRepository {
             return nil
         }
 
+        let requestDTO = MoviesListRequestDTO(page: page)
         let endpoint = APIEndpoints.getFavoriteMovies(
             accountId: accountId,
             sessionId: sessionId,
-            requestDTO: requestValue
+            requestDTO: requestDTO
         )
 
         let task = RepositoryTask()
@@ -92,7 +93,7 @@ extension DefaultProfileRepository: ProfileRepository {
 
     func fetchWatchlistMovies(
         accountId: Int,
-        requestValue: MoviesListRequestDTO,
+        page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
 
@@ -105,10 +106,11 @@ extension DefaultProfileRepository: ProfileRepository {
             return nil
         }
 
+        let requestDTO = MoviesListRequestDTO(page: page)
         let endpoint = APIEndpoints.getWatchlistMovies(
             accountId: accountId,
             sessionId: sessionId,
-            requestDTO: requestValue
+            requestDTO: requestDTO
         )
 
         let task = RepositoryTask()
@@ -131,7 +133,8 @@ extension DefaultProfileRepository: ProfileRepository {
 
     func markAsFavorite(
         accountId: Int,
-        requestValue: FavoriteRequestDTO,
+        movieId: Int,
+        isFavorite: Bool,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
@@ -144,10 +147,15 @@ extension DefaultProfileRepository: ProfileRepository {
             return nil
         }
 
+        let requestDTO = FavoriteRequestDTO(
+            mediaType: "movie",
+            mediaId: movieId,
+            favorite: isFavorite
+        )
         let endpoint = APIEndpoints.markAsFavorite(
             accountId: accountId,
             sessionId: sessionId,
-            requestDTO: requestValue
+            requestDTO: requestDTO
         )
 
         let task = RepositoryTask()
@@ -183,7 +191,8 @@ extension DefaultProfileRepository: ProfileRepository {
 
     func markAsWatchlist(
         accountId: Int,
-        requestValue: WatchlistRequestDTO,
+        movieId: Int,
+        isInWatchlist: Bool,
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
@@ -196,10 +205,16 @@ extension DefaultProfileRepository: ProfileRepository {
             return nil
         }
 
+        let requestDTO = WatchlistRequestDTO(
+            mediaType: "movie",
+            mediaId: movieId,
+            watchlist: isInWatchlist
+        )
+
         let endpoint = APIEndpoints.markAsWatchlist(
             accountId: accountId,
             sessionId: sessionId,
-            requestDTO: requestValue
+            requestDTO: requestDTO
         )
 
         let task = RepositoryTask()

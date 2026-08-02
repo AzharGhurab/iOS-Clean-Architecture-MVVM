@@ -203,11 +203,8 @@ extension DefaultMovieDetailsViewModel {
         favoriteTask = markAsFavoriteUseCase.execute(
             requestValue: MarkAsFavoriteUseCaseRequestValue(
                 accountId: accountId,
-                favoriteRequestDTO: FavoriteRequestDTO(
-                    mediaType: "movie",
-                    mediaId: movieId,
-                    favorite: isFavorite
-                )
+                movieId: movieId,
+                isFavorite: isFavorite
             )
         ) { [weak self] result in
             self?.mainQueue.async {
@@ -258,11 +255,8 @@ extension DefaultMovieDetailsViewModel {
         watchlistTask = markAsWatchlistUseCase.execute(
             requestValue: MarkAsWatchlistUseCaseRequestValue(
                 accountId: accountId,
-                watchlistRequestDTO: WatchlistRequestDTO(
-                    mediaType: "movie",
-                    mediaId: movieId,
-                    watchlist: isInWatchlist
-                )
+                movieId: movieId,
+                isInWatchlist: isInWatchlist
             )
         ) { [weak self] result in
             self?.mainQueue.async {

@@ -264,14 +264,13 @@ private extension DefaultMovieSelectionViewModel {
         accountId: Int,
         page: Int
     ) {
-        let requestDTO = MoviesListRequestDTO(page: page)
 
         switch type {
         case .favorites:
             moviesLoadTask = fetchFavoriteMoviesUseCase.execute(
-                requestValue: FetchFavoriteMoviesUseCaseRequestValue(
+                requestValue:  FetchFavoriteMoviesUseCaseRequestValue(
                     accountId: accountId,
-                    moviesListRequestDTO: requestDTO
+                    page: page
                 ),
                 completion: handleProfileMoviesResult
             )
@@ -280,7 +279,7 @@ private extension DefaultMovieSelectionViewModel {
             moviesLoadTask = fetchWatchlistMoviesUseCase.execute(
                 requestValue: FetchWatchlistMoviesUseCaseRequestValue(
                     accountId: accountId,
-                    moviesListRequestDTO: requestDTO
+                    page: page
                 ),
                 completion: handleProfileMoviesResult
             )
@@ -341,11 +340,8 @@ private extension DefaultMovieSelectionViewModel {
             return markAsFavoriteUseCase.execute(
                 requestValue: MarkAsFavoriteUseCaseRequestValue(
                     accountId: accountId,
-                    favoriteRequestDTO: FavoriteRequestDTO(
-                        mediaType: "movie",
-                        mediaId: movieId,
-                        favorite: false
-                    )
+                    movieId: movieId,
+                    isFavorite: false
                 ),
                 completion: completion
             )
@@ -359,11 +355,8 @@ private extension DefaultMovieSelectionViewModel {
             return markAsWatchlistUseCase.execute(
                 requestValue: MarkAsWatchlistUseCaseRequestValue(
                     accountId: accountId,
-                    watchlistRequestDTO: WatchlistRequestDTO(
-                        mediaType: "movie",
-                        mediaId: movieId,
-                        watchlist: false
-                    )
+                    movieId: movieId,
+                    isInWatchlist: false
                 ),
                 completion: completion
             )

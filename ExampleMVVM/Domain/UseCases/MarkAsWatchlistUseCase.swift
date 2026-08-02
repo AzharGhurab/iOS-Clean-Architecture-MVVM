@@ -18,8 +18,7 @@ final class DefaultMarkAsWatchlistUseCase: MarkAsWatchlistUseCase {
 
     private let profileRepository: ProfileRepository
 
-    init(profileRepository: ProfileRepository)
-    {
+    init(profileRepository: ProfileRepository) {
         self.profileRepository = profileRepository
     }
 
@@ -28,9 +27,10 @@ final class DefaultMarkAsWatchlistUseCase: MarkAsWatchlistUseCase {
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
-        return profileRepository.markAsWatchlist(
+        profileRepository.markAsWatchlist(
             accountId: requestValue.accountId,
-            requestValue: requestValue.watchlistRequestDTO,
+            movieId: requestValue.movieId,
+            isInWatchlist: requestValue.isInWatchlist,
             completion: completion
         )
     }
@@ -38,5 +38,6 @@ final class DefaultMarkAsWatchlistUseCase: MarkAsWatchlistUseCase {
 
 struct MarkAsWatchlistUseCaseRequestValue {
     let accountId: Int
-    let watchlistRequestDTO: WatchlistRequestDTO
+    let movieId: Int
+    let isInWatchlist: Bool
 }

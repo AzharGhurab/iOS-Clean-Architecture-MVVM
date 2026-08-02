@@ -26,9 +26,10 @@ final class DefaultMarkAsFavoriteUseCase: MarkAsFavoriteUseCase {
         completion: @escaping (Result<Void, Error>) -> Void
     ) -> Cancellable? {
 
-        return profileRepository.markAsFavorite(
+        profileRepository.markAsFavorite(
             accountId: requestValue.accountId,
-            requestValue: requestValue.favoriteRequestDTO,
+            movieId: requestValue.movieId,
+            isFavorite: requestValue.isFavorite,
             completion: completion
         )
     }
@@ -36,5 +37,6 @@ final class DefaultMarkAsFavoriteUseCase: MarkAsFavoriteUseCase {
 
 struct MarkAsFavoriteUseCaseRequestValue {
     let accountId: Int
-    let favoriteRequestDTO: FavoriteRequestDTO
+    let movieId: Int
+    let isFavorite: Bool
 }

@@ -27,9 +27,9 @@ final class DefaultFetchFavoriteMoviesUseCase: FetchFavoriteMoviesUseCase {
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
 
-        return profileRepository.fetchFavoriteMovies(
+        profileRepository.fetchFavoriteMovies(
             accountId: requestValue.accountId,
-            requestValue: requestValue.moviesListRequestDTO,
+            page: requestValue.page,
             completion: completion
         )
     }
@@ -37,5 +37,5 @@ final class DefaultFetchFavoriteMoviesUseCase: FetchFavoriteMoviesUseCase {
 
 struct FetchFavoriteMoviesUseCaseRequestValue {
     let accountId: Int
-    let moviesListRequestDTO: MoviesListRequestDTO
+    let page: Int
 }
