@@ -16,7 +16,6 @@ final class ProfileViewController: UIViewController, StoryboardInstantiable {
     @IBOutlet private weak var tableView: UITableView!
 
     private var viewModel: ProfileViewModel!
-    private var userType: ProfileUserType = .unauthenticated
 
     static func create(with viewModel: ProfileViewModel) -> ProfileViewController {
         let view = instantiateViewController()
@@ -74,7 +73,6 @@ private extension ProfileViewController {
         viewModel.signIn()
     }
     func updateUI(for userType: ProfileUserType) {
-        self.userType = userType
         
         switch userType {
         case .guest:
@@ -126,7 +124,7 @@ private extension ProfileViewController {
 extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView,numberOfRowsInSection section: Int) -> Int {
-        return userType == .signedIn ? 4 : 3
+        viewModel.userType.value == .signedIn ? 4 : 3
     }
     
     func tableView(_ tableView: UITableView,cellForRowAt indexPath: IndexPath) -> UITableViewCell {
