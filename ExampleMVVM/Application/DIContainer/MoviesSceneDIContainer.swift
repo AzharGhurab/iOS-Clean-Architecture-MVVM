@@ -80,6 +80,12 @@ final class MoviesSceneDIContainer:
             moviesQueriesRepository: makeMoviesQueriesRepository()
         )
     }
+    
+    func makeFetchPopularMoviesUseCase() -> FetchPopularMoviesUseCase {
+        DefaultFetchPopularMoviesUseCase(
+            moviesRepository: makeMoviesRepository()
+        )
+    }
     func makeFetchGenresUseCase() -> FetchGenresUseCase {
         DefaultFetchGenresUseCase(
             genresRepository: makeGenresRepository())
@@ -312,6 +318,7 @@ final class MoviesSceneDIContainer:
     func makeMoviesListViewModel(actions: MoviesListViewModelActions) -> MoviesListViewModel {
         DefaultMoviesListViewModel(
             searchMoviesUseCase: makeSearchMoviesUseCase(),
+            fetchPopularMoviesUseCase: makeFetchPopularMoviesUseCase(),
             fetchGenresUseCase: makeFetchGenresUseCase(),
             actions: actions
         )

@@ -15,7 +15,7 @@ struct LoginViewModelActions {
 protocol LoginViewModelInput {
     func continueAsGuest()
     func signIn()
-    func createSession(requestToken: String)
+    func createSession(requestToken: String, completion: @escaping (Bool) -> Void)
 }
 
 protocol LoginViewModelOutput {
@@ -95,7 +95,7 @@ final class DefaultLoginViewModel: LoginViewModel {
             }
         }
     }
-    func createSession(requestToken: String) {
+    func createSession(requestToken: String, completion: @escaping (Bool) -> Void) {
         authenticationTask = createSessionUseCase.execute(
             requestValue: CreateSessionUseCaseRequestValue(requestToken: requestToken)
         ) { [weak self] result in
@@ -114,15 +114,18 @@ final class DefaultLoginViewModel: LoginViewModel {
                             case .success:
                                 self?.authenticationState.value = .loggedIn(sessionId: sessionId)
                                 self?.actions?.showProfile()
-
+                              completion(true)
                             case .failure(let error):
                                 self?.authenticationState.value = .failed(error: error)
+                                completion(false)
+                                
                             }
                         }
                     }
 
                 case .failure(let error):
                     self?.authenticationState.value = .failed(error: error)
+                    completion(false)
                 }
             }
         }

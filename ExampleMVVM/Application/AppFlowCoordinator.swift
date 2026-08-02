@@ -58,6 +58,7 @@ final class AppFlowCoordinator {
         
         navigationController.setViewControllers([tabBarController], animated: false)
         self.navigationController.setNavigationBarHidden(true, animated: false)
+
     }
 }
     // MARK: - Tab Bar Appearance

@@ -14,11 +14,11 @@ final class AuthorizeViewController: UIViewController, StoryboardInstantiable {
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
 
     private var requestToken: String!
-    private var onAuthorizationCompleted: ((String) -> Void)?
+    private var onAuthorizationCompleted: ((String, @escaping (Bool) -> Void) -> Void)?
     private let appConfiguration = AppConfiguration()
     static func create(
         requestToken: String,
-        onAuthorizationCompleted: @escaping (String) -> Void
+        onAuthorizationCompleted: ((String, @escaping (Bool) -> Void) -> Void)?
     ) -> AuthorizeViewController {
         let view = AuthorizeViewController.instantiateViewController()
         view.requestToken = requestToken
@@ -63,6 +63,10 @@ extension AuthorizeViewController: SFSafariViewControllerDelegate {
 
     func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
         activityIndicator.startAnimating()
-        onAuthorizationCompleted?(requestToken)
+        openTMDBButton.isEnabled = false
+        onAuthorizationCompleted?(requestToken) { [weak self] success in
+            self?.activityIndicator.stopAnimating()
+            self?.openTMDBButton.isEnabled = true
+        }
     }
 }

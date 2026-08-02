@@ -1,6 +1,6 @@
 import Foundation
 
-typealias MoviesQueryListViewModelDidSelectAction = (MovieQuery) -> Void
+typealias MoviesQueryListViewModelDidSelectAction = (MovieQuery,Bool) -> Void
 
 protocol MoviesQueryListViewModelInput {
     func viewWillAppear()
@@ -67,6 +67,6 @@ extension DefaultMoviesQueryListViewModel {
     }
     
     func didSelect(item: MoviesQueryListItemViewModel) {
-        didSelect?(MovieQuery(query: item.query))
+        didSelect?(MovieQuery(query: item.query),true)
     }
 }
