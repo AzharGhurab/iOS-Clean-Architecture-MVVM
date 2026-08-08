@@ -22,6 +22,8 @@ protocol MoviesListViewModelInput {
     func closeQueriesSuggestions()
     func didSelectItem(at index: Int)
     func didSelectGenre(at index: Int)
+    func didSelectCategory(_ category: SearchCategory)
+    
 }
 
 protocol MoviesListViewModelOutput {
@@ -45,6 +47,9 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     private let fetchPopularMoviesUseCase: FetchPopularMoviesUseCase
     private var isSearching = false
     private let fetchGenresUseCase: FetchGenresUseCase
+    private var movieGenres: [Genre] = []
+    private var tvGenres: [Genre] = []
+    private var selectedCategory: SearchCategory = .movies
     private let actions: MoviesListViewModelActions?
     private var allMovies: [Movie] = []
     private var popularMovies: [Movie] = []
@@ -102,22 +107,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         if !isSearching {
             popularMovies = allMovies
         }
-
-        let moviesToDisplay = isSearching
-            ? allMovies
-            : popularMovies
-
-        if let selectedGenreId {
-            displayedMovies = moviesToDisplay.filter {
-                $0.genreIds?.contains(selectedGenreId) ?? false
-            }
-        } else {
-            displayedMovies = moviesToDisplay
-        }
-
-        items.value = displayedMovies.map(
-            MoviesListItemViewModel.init
-        )
+        applyCurrentFilters()
     }
     
     private func resetPages() {
@@ -197,22 +187,51 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     // MARK: - Private
     
     private func loadGenres() {
-            
-            _ = fetchGenresUseCase.execute { [weak self] result in
-                
-                self?.mainQueue.async {
-                    
-                    switch result {
-                        
-                    case .success(let genres):
-                        self?.genres.value = genres
-                        
-                    case .failure(let error):
-                        print("Error loading genres:", error)
-                    }
+        _ = fetchGenresUseCase.execute { [weak self] result in
+            self?.mainQueue.async {
+                guard let self else { return }
+
+                switch result {
+                case .success(let result):
+                    self.movieGenres = result.movieGenres
+                    self.tvGenres = result.tvGenres
+                    self.genres.value = result.movieGenres
+
+                case .failure(let error):
+                    print("Error loading genres:", error)
                 }
             }
         }
+    }
+
+    private func applyCurrentFilters() {
+        let sourceItems = isSearching
+            ? allMovies
+            : popularMovies
+
+        let categoryItems = sourceItems.filter { item in
+            switch selectedCategory {
+            case .movies:
+                return item.mediaType == "movie" || item.mediaType == nil
+
+            case .tvShows:
+                return item.mediaType == "tv"
+            }
+        }
+
+        if let selectedGenreId {
+            displayedMovies = categoryItems.filter {
+                $0.genreIds?.contains(selectedGenreId) ?? false
+            }
+        } else {
+            displayedMovies = categoryItems
+        }
+
+        items.value = displayedMovies.map(
+            MoviesListItemViewModel.init
+        )
+    }
+
     }
 
 // MARK: - INPUT. View event methods
@@ -270,17 +289,9 @@ extension DefaultMoviesListViewModel {
         actions?.showMovieDetails(displayedMovies[index])
     }
     func didSelectGenre(at index: Int) {
-        let moviesToFilter = isSearching
-            ? allMovies
-            : popularMovies
-
         if index == 0 {
             selectedGenreId = nil
-            displayedMovies = moviesToFilter
-
-            items.value = displayedMovies.map(
-                MoviesListItemViewModel.init
-            )
+            applyCurrentFilters()
             return
         }
 
@@ -290,16 +301,22 @@ extension DefaultMoviesListViewModel {
             return
         }
 
-        let selectedGenre = genres.value[genreIndex]
-        selectedGenreId = selectedGenre.id
+        selectedGenreId = genres.value[genreIndex].id
+        applyCurrentFilters()
+    }
+    func didSelectCategory(_ category: SearchCategory) {
+        selectedCategory = category
+        selectedGenreId = nil
 
-        displayedMovies = moviesToFilter.filter {
-            $0.genreIds?.contains(selectedGenre.id) ?? false
+        switch category {
+        case .movies:
+            genres.value = movieGenres
+
+        case .tvShows:
+            genres.value = tvGenres
         }
 
-        items.value = displayedMovies.map(
-            MoviesListItemViewModel.init
-        )
+        applyCurrentFilters()
     }
 }
 

@@ -6,6 +6,7 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     @IBOutlet private var moviesListContainer: UIView!
     @IBOutlet private(set) var suggestionsListContainer: UIView!
     @IBOutlet private var searchBarContainer: UIView!
+    @IBOutlet private weak var genresTitleLabel: UILabel!
     @IBOutlet private weak var genresCollectionView: UICollectionView!
     @IBOutlet private var emptyDataLabel: UILabel!    
     
@@ -13,6 +14,7 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     private var posterImagesRepository: PosterImagesRepository?
     private var selectedGenreIndex = 0
     private var moviesTableViewController: MoviesListTableViewController?
+    private let categoryFilterView = CategoryFilterView()
     private var searchController = UISearchController(searchResultsController: nil)
 
     // MARK: - Lifecycle
@@ -64,12 +66,6 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
 
     // MARK: - Private
 
-    private func setupViews() {
-        title = viewModel.screenTitle
-        emptyDataLabel.text = viewModel.emptyDataTitle
-        setupSearchController()
-    }
-
     private func setupBehaviours() {
         addBehaviors([BackButtonEmptyTitleNavigationBarBehavior(),
                       BlackStyleNavigationBarBehavior()])
@@ -101,15 +97,17 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     private func updateQueriesSuggestions() {
         let isSearching = searchController.searchBar.isFirstResponder
 
-            suggestionsListContainer.isHidden = !isSearching
-            moviesListContainer.isHidden = isSearching
+        suggestionsListContainer.isHidden = !isSearching
+        genresTitleLabel.isHidden = isSearching
+        categoryFilterView.isHidden = isSearching
+        genresCollectionView.isHidden = isSearching
 
-            if isSearching {
-                viewModel.showQueriesSuggestions()
-            } else {
-                viewModel.closeQueriesSuggestions()
-            }
+        if isSearching {
+            viewModel.showQueriesSuggestions()
+        } else {
+            viewModel.closeQueriesSuggestions()
         }
+    }
 
     private func updateSearchQuery(_ query: String) {
         searchController.isActive = false
@@ -125,6 +123,56 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
 // MARK: - Search Controller
 
 extension MoviesListViewController {
+    private func setupViews() {
+        title = viewModel.screenTitle
+        emptyDataLabel.text = viewModel.emptyDataTitle
+
+        categoryFilterView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(categoryFilterView)
+
+        NSLayoutConstraint.activate([
+            categoryFilterView.topAnchor.constraint(
+                equalTo: genresTitleLabel.bottomAnchor,
+                constant: 8
+            ),
+            categoryFilterView.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: 16
+            ),
+            categoryFilterView.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -16
+            ),
+            categoryFilterView.heightAnchor.constraint(
+                equalToConstant: 44
+            ),
+
+            genresCollectionView.topAnchor.constraint(
+                equalTo: categoryFilterView.bottomAnchor,
+                constant: 4
+            )
+        ])
+
+        categoryFilterView.onCategoryChanged = { [weak self] category in
+            guard let self else { return }
+
+            selectedGenreIndex = 0
+            viewModel.didSelectCategory(category)
+
+            genresCollectionView.setContentOffset(.zero, animated: false)
+            genresCollectionView.reloadData()
+        }
+
+        genresCollectionView.register(
+            UINib(
+                nibName: GenreCell.reuseIdentifier,
+                bundle: nil
+            ),
+            forCellWithReuseIdentifier: GenreCell.reuseIdentifier
+        )
+
+        setupSearchController()
+    }
     private func setupSearchController() {
         searchController.delegate = self
         searchController.searchBar.delegate = self

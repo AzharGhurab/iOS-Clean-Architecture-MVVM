@@ -1,6 +1,6 @@
 import UIKit
 
-extension UITableViewController {
+extension  UIViewController {
 
     func makeActivityIndicator(size: CGSize) -> UIActivityIndicatorView {
         let style: UIActivityIndicatorView.Style

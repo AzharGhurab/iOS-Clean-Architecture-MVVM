@@ -24,6 +24,7 @@ extension MovieResponseEntity {
 
             overview: overview,
             releaseDate: releaseDate,
+            firstAirDate: nil,
             mediaType: mediaType
         )
     }

@@ -7,11 +7,16 @@
 
 import Foundation
 
+struct GenresResult {
+    let movieGenres: [Genre]
+    let tvGenres: [Genre]
+}
+
 protocol FetchGenresUseCase {
     
     @discardableResult
     func execute(
-        completion: @escaping (Result<[Genre], Error>) -> Void
+        completion: @escaping (Result<GenresResult, Error>) -> Void
     ) -> Cancellable?
 }
 
@@ -25,8 +30,8 @@ final class DefaultFetchGenresUseCase: FetchGenresUseCase {
     
     @discardableResult
     func execute(
-        completion: @escaping (Result<[Genre], Error>) -> Void
-    ) -> Cancellable? {
+        completion: @escaping (Result<GenresResult, Error>) -> Void
+    ) -> Cancellable?{
         
         let task = genresRepository.fetchMovieGenres { [weak self] movieResult in
             
@@ -40,16 +45,14 @@ final class DefaultFetchGenresUseCase: FetchGenresUseCase {
                         
                     case .success(let tvGenres):
                         
-                        let allGenres = movieGenres + tvGenres
-                        
-                        let uniqueGenres = Array(
-                            Dictionary(
-                                grouping: allGenres,
-                                by: { $0.id }
-                            ).compactMap { $0.value.first }
+                        completion(
+                            .success(
+                                GenresResult(
+                                    movieGenres: movieGenres,
+                                    tvGenres: tvGenres
+                                )
+                            )
                         )
-                        
-                        completion(.success(uniqueGenres))
                         
                     case .failure(let error):
                         completion(.failure(error))

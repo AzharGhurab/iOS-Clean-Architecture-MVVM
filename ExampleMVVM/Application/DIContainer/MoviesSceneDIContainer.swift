@@ -3,6 +3,7 @@ import UIKit
 final class MoviesSceneDIContainer:
     MoviesSearchFlowCoordinatorDependencies,
     MoviesHomeFlowCoordinatorDependencies,
+    SeeAllFlowCoordinatorDependencies,
     AuthFlowCoordinatorDependencies,
     ProfileFlowCoordinatorDependencies,
     ListsFlowCoordinatorDependencies {
@@ -92,6 +93,11 @@ final class MoviesSceneDIContainer:
         }
     func makeFetchHomeMoviesUseCase() -> FetchHomeMoviesUseCase {
         DefaultFetchHomeMoviesUseCase(
+            moviesRepository: makeMoviesRepository()
+        )
+    }
+    func makeFetchSeeAllMoviesUseCase() -> FetchSeeAllMoviesUseCase {
+        DefaultFetchSeeAllMoviesUseCase(
             moviesRepository: makeMoviesRepository()
         )
     }
@@ -339,6 +345,33 @@ final class MoviesSceneDIContainer:
             actions: actions
         )
     }
+    func makeSeeAllViewController(
+        actions: SeeAllViewModelActions,
+        section: HomeSectionType
+    ) -> SeeAllViewController {
+
+        SeeAllViewController.create(
+            with: makeSeeAllViewModel(
+                actions: actions,
+                section: section
+            ),
+            posterImagesRepository: makePosterImagesRepository()
+        )
+    }
+
+    func makeSeeAllViewModel(
+        actions: SeeAllViewModelActions,
+        section: HomeSectionType
+    ) -> SeeAllViewModel {
+        DefaultSeeAllViewModel(
+            section: section,
+            fetchSeeAllMoviesUseCase:
+                makeFetchSeeAllMoviesUseCase(),
+            fetchGenresUseCase:
+                makeFetchGenresUseCase(),
+            actions: actions
+        )
+    }
 
     // MARK: - Movie Details
 
@@ -447,6 +480,16 @@ final class MoviesSceneDIContainer:
             navigationController: navigationController,
             dependencies: self,
             accountId: accountId
+        )
+    }
+    func makeSeeAllFlowCoordinator(
+        navigationController: UINavigationController,
+        section: HomeSectionType
+    ) -> SeeAllFlowCoordinator {
+        SeeAllFlowCoordinator(
+            navigationController: navigationController,
+            dependencies: self,
+            section: section
         )
     }
 }

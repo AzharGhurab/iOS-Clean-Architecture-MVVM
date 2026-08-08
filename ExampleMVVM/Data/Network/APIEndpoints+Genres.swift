@@ -22,4 +22,23 @@ extension APIEndpoints {
             method: .get
         )
     }
+    static func searchMovies(
+        with requestDTO: MoviesRequestDTO
+    ) -> Endpoint<MoviesResponseDTO> {
+        Endpoint(
+            path: "3/search/movie",
+            method: .get,
+            queryParametersEncodable: requestDTO
+        )
+    }
+
+    static func searchTVShows(
+        with requestDTO: MoviesRequestDTO
+    ) -> Endpoint<MoviesResponseDTO> {
+        Endpoint(
+            path: "3/search/tv",
+            method: .get,
+            queryParametersEncodable: requestDTO
+        )
+    }
 }
