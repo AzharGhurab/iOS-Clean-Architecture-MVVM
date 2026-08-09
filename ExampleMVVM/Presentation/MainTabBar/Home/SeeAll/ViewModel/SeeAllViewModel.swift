@@ -21,7 +21,6 @@ protocol SeeAllViewModelInput {
     func didLoadNextPage()
     func didSelectGenre(at index: Int)
     func didSelectItem(at index: Int)
-    func didSelectCategory(_ category: SearchCategory)
 }
 
 protocol SeeAllViewModelOutput {
@@ -45,10 +44,6 @@ final class DefaultSeeAllViewModel: SeeAllViewModel {
     private let fetchGenresUseCase: FetchGenresUseCase
     private let actions: SeeAllViewModelActions?
     private let mainQueue: DispatchQueueType
-    private var movieGenres: [Genre] = []
-    private var tvGenres: [Genre] = []
-    private var selectedCategory: SearchCategory = .movies
-
     // MARK: - State
 
     private var pages: [MoviesPage] = []
@@ -198,18 +193,6 @@ extension DefaultSeeAllViewModel {
 
         let movie = displayedMovies[index]
         actions?.showMovieDetails(movie)
-    }
-    func didSelectCategory(_ category: SearchCategory) {
-        selectedCategory = category
-        selectedGenreId = nil
-
-        switch category {
-        case .movies:
-            genres.value = movieGenres
-
-        case .tvShows:
-            genres.value = tvGenres
-        }
     }
 }
 
