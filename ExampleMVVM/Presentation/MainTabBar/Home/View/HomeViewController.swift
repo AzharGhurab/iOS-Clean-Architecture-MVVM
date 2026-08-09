@@ -12,7 +12,6 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
     
     private var viewModel: HomeViewModel!
     private var posterImagesRepository: PosterImagesRepository?
-    private var sections: [HomeSectionViewModel] = []
     private let refreshControl = UIRefreshControl()
     private var isLoading = false
     @IBOutlet private weak var collectionView: UICollectionView!
@@ -59,11 +58,9 @@ private extension HomeViewController {
     }
     
     func bind(to viewModel: HomeViewModel) {
-        viewModel.sections.observe(on: self) { [weak self] sections in
+        viewModel.sections.observe(on: self) { [weak self] _ in
             guard let self else { return }
-
-            self.sections = sections
-
+            
             guard !self.isLoading else { return }
 
             self.collectionView.reloadData()
@@ -115,18 +112,21 @@ private extension HomeViewController {
 extension HomeViewController: SkeletonCollectionViewDataSource  {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        viewModel.sections.value.count
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        guard sections.indices.contains(section) else {
+        guard viewModel.sections.value.indices.contains(section) else {
             return 0
         }
 
-        return min(sections[section].movies.count, 3)
+        return min(
+            viewModel.sections.value[section].movies.count,
+            3
+        )
     }
     
     func collectionView(
@@ -139,6 +139,9 @@ extension HomeViewController: SkeletonCollectionViewDataSource  {
         ) as? HomeMovieCollectionViewCell else {
             return UICollectionViewCell()
         }
+
+        let sections = viewModel.sections.value
+
         guard sections.indices.contains(indexPath.section),
               sections[indexPath.section].movies.indices.contains(indexPath.item) else {
             return cell
@@ -171,6 +174,8 @@ extension HomeViewController: SkeletonCollectionViewDataSource  {
             header.showLoadingState()
             return header
         }
+
+        let sections = viewModel.sections.value
 
         guard sections.indices.contains(indexPath.section) else {
             return header
