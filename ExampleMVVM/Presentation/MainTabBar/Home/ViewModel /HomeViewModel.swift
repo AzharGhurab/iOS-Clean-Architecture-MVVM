@@ -100,11 +100,9 @@ private extension DefaultHomeViewModel {
         loadTask = fetchHomeMoviesUseCase.execute { [weak self] result in
             self?.mainQueue.async {
                 guard let self = self else { return }
-                self.loading.value = false
                 
                 switch result {
                 case .success(let homeMovies):
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                         self.movieSections = [
                             homeMovies.nowPlaying,
                             homeMovies.popular,
@@ -144,7 +142,6 @@ private extension DefaultHomeViewModel {
                         ]
                         
                         self.loading.value = false
-                    }
                     
                 case .failure(let error):
                     self.loading.value = false
