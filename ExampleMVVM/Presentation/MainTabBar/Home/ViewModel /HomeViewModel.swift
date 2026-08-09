@@ -141,12 +141,11 @@ private extension DefaultHomeViewModel {
                             )
                         ]
                         
-                        self.loading.value = false
                     
                 case .failure(let error):
-                    self.loading.value = false
                     self.handle(error: error)
                 }
+                self.loading.value = false
             }
         }
     }
