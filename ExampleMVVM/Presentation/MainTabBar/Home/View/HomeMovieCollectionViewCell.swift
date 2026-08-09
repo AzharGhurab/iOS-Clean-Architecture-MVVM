@@ -18,6 +18,8 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
     @IBOutlet private weak var titleLabel: UILabel!
     @IBOutlet private weak var ratingLabel: UILabel!
 
+    private var mainQueue: DispatchQueueType = DispatchQueue.main
+
     private var imageLoadTask: Cancellable? {
         willSet {
             imageLoadTask?.cancel()
@@ -55,8 +57,11 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
 
     func configure(
         with viewModel: HomeMovieCellViewModel,
-        posterImagesRepository: PosterImagesRepository?
+        posterImagesRepository: PosterImagesRepository?,
+        mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
+        self.mainQueue = mainQueue
+
         posterImageView.image = nil
         titleLabel.text = viewModel.title
         ratingLabel.text = viewModel.rating
@@ -74,9 +79,8 @@ final class HomeMovieCollectionViewCell: UICollectionViewCell {
                     return
                 }
 
-                DispatchQueue.main.async {
-                    self?.posterImageView.image =
-                        UIImage(data: data)
+                self?.mainQueue.async {
+                    self?.posterImageView.image = UIImage(data: data)
                 }
             }
     }
