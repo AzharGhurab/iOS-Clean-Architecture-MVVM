@@ -6,6 +6,7 @@ final class MoviesListTableViewController: UITableViewController {
 
     var posterImagesRepository: PosterImagesRepository?
     var nextPageLoadingSpinner: UIActivityIndicatorView?
+    var emptyDataLabel: UILabel?
 
     // MARK: - Lifecycle
 
@@ -16,6 +17,7 @@ final class MoviesListTableViewController: UITableViewController {
 
     func reload() {
         tableView.reloadData()
+        emptyDataLabel?.isHidden = !viewModel.items.value.isEmpty
     }
 
     func updateLoading(_ loading: MoviesListViewModelLoading?) {
@@ -33,7 +35,14 @@ final class MoviesListTableViewController: UITableViewController {
 
     private func setupViews() {
         tableView.estimatedRowHeight = MoviesListItemCell.height
-        tableView.rowHeight = UITableView.automaticDimension
+        tableView.separatorColor = UIColor.darkGray.withAlphaComponent(0.20)
+
+           tableView.separatorInset = UIEdgeInsets(
+               top: 0,
+               left: 100,
+               bottom: 0,
+               right: 20
+               )
     }
 }
 
@@ -65,7 +74,9 @@ extension MoviesListTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return viewModel.isEmpty ? tableView.frame.height : super.tableView(tableView, heightForRowAt: indexPath)
+        return viewModel.isEmpty
+            ? tableView.frame.height
+            : MoviesListItemCell.height
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProfileItemCell" id="ZRf-rN-3VA" customClass="ProfileItemCell" customModule="ExampleMVVM" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ZRf-rN-3VA" id="L0U-4K-h5M">
+                <rect key="frame" x="0.0" y="0.0" width="393" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="list" translatesAutoresizingMaskIntoConstraints="NO" id="5XK-Od-FM1" userLabel="Icon Image View">
+                        <rect key="frame" x="16" y="10" width="24" height="24"/>
+                        <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="24" id="LS2-mY-CuX"/>
+                            <constraint firstAttribute="width" constant="24" id="sb7-az-B9o"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lRQ-MW-wC5" userLabel="Title Label">
+                        <rect key="frame" x="56" y="11.666666666666664" width="42" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" highlightedImage="chevron.right" translatesAutoresizingMaskIntoConstraints="NO" id="mZO-0m-jgY" userLabel="Chevron Image View">
+                        <rect key="frame" x="365" y="17" width="8" height="10.333333333333332"/>
+                        <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="8" id="V8W-7z-6cd"/>
+                            <constraint firstAttribute="height" constant="14" id="cUR-Ft-0Fq"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="lRQ-MW-wC5" firstAttribute="centerY" secondItem="L0U-4K-h5M" secondAttribute="centerY" id="0ce-Zq-VIt"/>
+                    <constraint firstItem="5XK-Od-FM1" firstAttribute="leading" secondItem="L0U-4K-h5M" secondAttribute="leading" constant="16" id="DL7-eE-u2O"/>
+                    <constraint firstAttribute="trailing" secondItem="mZO-0m-jgY" secondAttribute="trailing" constant="20" id="HJq-Zb-Gvd"/>
+                    <constraint firstItem="5XK-Od-FM1" firstAttribute="centerY" secondItem="L0U-4K-h5M" secondAttribute="centerY" id="Qxe-V5-lYz"/>
+                    <constraint firstItem="lRQ-MW-wC5" firstAttribute="leading" secondItem="5XK-Od-FM1" secondAttribute="trailing" constant="16" id="f0k-ie-XAc"/>
+                    <constraint firstItem="mZO-0m-jgY" firstAttribute="centerY" secondItem="L0U-4K-h5M" secondAttribute="centerY" id="p5k-cU-meL"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="chevronImageView" destination="mZO-0m-jgY" id="Bsq-oq-LKH"/>
+                <outlet property="iconImageView" destination="5XK-Od-FM1" id="tjh-7M-eLm"/>
+                <outlet property="titleLabel" destination="lRQ-MW-wC5" id="cHO-p0-8ms"/>
+            </connections>
+            <point key="canvasLocation" x="490.83969465648852" y="85.91549295774648"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="chevron.right" catalog="system" width="97" height="128"/>
+        <image name="list" width="128" height="128"/>
+    </resources>
+</document>

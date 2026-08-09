@@ -1,13 +1,52 @@
 import Foundation
 
 struct APIEndpoints {
+     enum Header {
+           static let contentType = "Content-Type"
+           static let applicationJSON = "application/json;charset=utf-8"
+       }
+
+        enum Parameter {
+           static let requestToken = "request_token"
+       }
     
     static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
 
         return Endpoint(
-            path: "3/search/movie",
+            path: "3/search/multi",
             method: .get,
             queryParametersEncodable: moviesRequestDTO
+        )
+    }
+    static func getNowPlayingMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/now_playing",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
+
+    static func getPopularMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/popular",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
+
+    static func getTopRatedMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/top_rated",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
+        )
+    }
+
+    static func getUpcomingMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+        return Endpoint(
+            path: "3/movie/upcoming",
+            method: .get,
+            queryParametersEncodable: moviesListRequestDTO
         )
     }
 

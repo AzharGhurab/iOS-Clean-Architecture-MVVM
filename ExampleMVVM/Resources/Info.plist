@@ -4,6 +4,8 @@
 <dict>
 	<key>ApiBaseURL</key>
 	<string>$(API_BASE_URL)</string>
+	<key>TMDBAuthenticationBaseURL</key>
+	<string>https://www.themoviedb.org/authenticate/</string>
 	<key>ApiKey</key>
 	<string>$(API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
