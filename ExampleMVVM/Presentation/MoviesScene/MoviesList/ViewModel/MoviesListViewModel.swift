@@ -63,6 +63,10 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     private var pages: [MoviesPage] = []
     private var moviesLoadTask: Cancellable? { willSet { moviesLoadTask?.cancel() } }
+    private var genresLoadTask: Cancellable? {
+        willSet {genresLoadTask?.cancel()
+        }
+    }
     private let mainQueue: DispatchQueueType
     
     // MARK: - OUTPUT
@@ -187,7 +191,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     // MARK: - Private
     
     private func loadGenres() {
-        _ = fetchGenresUseCase.execute { [weak self] result in
+        genresLoadTask = fetchGenresUseCase.execute { [weak self] result in
             self?.mainQueue.async {
                 guard let self else { return }
 
