@@ -25,6 +25,7 @@ extension MoviesResponseDTO {
             case rating = "vote_average"
             case overview
             case releaseDate = "release_date"
+            case firstAirDate = "first_air_date"
             case mediaType = "media_type"
         }
         enum GenreDTO: String, Decodable {
@@ -41,6 +42,7 @@ extension MoviesResponseDTO {
         let rating: Double?
         let overview: String?
         let releaseDate: String?
+        let firstAirDate: String?
         let mediaType: String?
 
     }
@@ -66,7 +68,9 @@ extension MoviesResponseDTO.MovieDTO {
 
                      rating: rating,
                      overview: overview,
-                     releaseDate: dateFormatter.date(from: releaseDate ?? ""),
+                     releaseDate: dateFormatter.date(
+                         from: releaseDate ?? firstAirDate ?? ""
+                     ),
                      mediaType: mediaType
                      )
     }

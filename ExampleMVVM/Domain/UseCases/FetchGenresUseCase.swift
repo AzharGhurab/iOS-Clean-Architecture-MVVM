@@ -7,11 +7,16 @@
 
 import Foundation
 
+struct GenresResult {
+    let movieGenres: [Genre]
+    let tvGenres: [Genre]
+}
+
 protocol FetchGenresUseCase {
     
     @discardableResult
     func execute(
-        completion: @escaping (Result<[Genre], Error>) -> Void
+        completion: @escaping (Result<GenresResult, Error>) -> Void
     ) -> Cancellable?
 }
 
@@ -25,42 +30,59 @@ final class DefaultFetchGenresUseCase: FetchGenresUseCase {
     
     @discardableResult
     func execute(
-        completion: @escaping (Result<[Genre], Error>) -> Void
+        completion: @escaping (Result<GenresResult, Error>) -> Void
     ) -> Cancellable? {
-        
-        let task = genresRepository.fetchMovieGenres { [weak self] movieResult in
-            
-            switch movieResult {
-                
-            case .success(let movieGenres):
-                
-                _ = self?.genresRepository.fetchTVGenres { tvResult in
-                    
-                    switch tvResult {
-                        
-                    case .success(let tvGenres):
-                        
-                        let allGenres = movieGenres + tvGenres
-                        
-                        let uniqueGenres = Array(
-                            Dictionary(
-                                grouping: allGenres,
-                                by: { $0.id }
-                            ).compactMap { $0.value.first }
-                        )
-                        
-                        completion(.success(uniqueGenres))
-                        
-                    case .failure(let error):
-                        completion(.failure(error))
-                    }
-                }
-                
-            case .failure(let error):
-                completion(.failure(error))
-            }
+
+        let dispatchGroup = DispatchGroup()
+
+        var movieGenresResult: Result<[Genre], Error>?
+        var tvGenresResult: Result<[Genre], Error>?
+
+        dispatchGroup.enter()
+        let movieGenresTask = genresRepository.fetchMovieGenres { result in
+            movieGenresResult = result
+            dispatchGroup.leave()
         }
-        
-        return task
+
+        dispatchGroup.enter()
+        let tvGenresTask = genresRepository.fetchTVGenres { result in
+            tvGenresResult = result
+            dispatchGroup.leave()
+        }
+
+        dispatchGroup.notify(queue: .global(qos: .userInitiated)) {
+
+            if case .failure(let error) = movieGenresResult {
+                completion(.failure(error))
+                return
+            }
+
+            if case .failure(let error) = tvGenresResult {
+                completion(.failure(error))
+                return
+            }
+
+            let genresResult = GenresResult(
+                movieGenres: movieGenresResult?.value ?? [],
+                tvGenres: tvGenresResult?.value ?? []
+            )
+
+            completion(.success(genresResult))
+        }
+
+        return CompositeCancellable(tasks: [
+            movieGenresTask,
+            tvGenresTask
+        ])
+    }
+}
+
+private extension Result where Success == [Genre], Failure == Error {
+
+    var value: [Genre]? {
+        guard case .success(let value) = self else {
+            return nil
+        }
+        return value
     }
 }

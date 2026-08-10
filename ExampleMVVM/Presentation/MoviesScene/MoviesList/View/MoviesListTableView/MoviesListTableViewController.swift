@@ -34,6 +34,14 @@ final class MoviesListTableViewController: UITableViewController {
     // MARK: - Private
 
     private func setupViews() {
+        tableView.register(
+            UINib(
+                nibName: MoviesListItemCell.reuseIdentifier,
+                bundle: nil
+            ),
+            forCellReuseIdentifier: MoviesListItemCell.reuseIdentifier
+        )
+
         tableView.estimatedRowHeight = MoviesListItemCell.height
         tableView.separatorColor = UIColor.darkGray.withAlphaComponent(0.20)
 

@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import SkeletonView
 
 final class HomeViewController: UIViewController, StoryboardInstantiable {
     
     private var viewModel: HomeViewModel!
     private var posterImagesRepository: PosterImagesRepository?
-    private var sections: [HomeSectionViewModel] = []
-    private let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
+    private let refreshControl = UIRefreshControl()
+    private var isLoading = false
     @IBOutlet private weak var collectionView: UICollectionView!
     
     static func create(
@@ -30,18 +31,6 @@ final class HomeViewController: UIViewController, StoryboardInstantiable {
         setupView()
         bind(to: viewModel)
         viewModel.viewDidLoad()
-        setupActivityIndicator()
-    }
-    func setupActivityIndicator() {
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.hidesWhenStopped = true
-        
-        view.addSubview(activityIndicator)
-        
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
     }
 }
 
@@ -50,25 +39,54 @@ private extension HomeViewController {
     
     func setupView() {
         title = viewModel.screenTitle
-        
+
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.isSkeletonable = true
+
+        refreshControl.addTarget(
+            self,
+            action: #selector(didPullToRefresh),
+            for: .valueChanged
+        )
+
+        collectionView.refreshControl = refreshControl
+    }
+    
+    @objc private func didPullToRefresh() {
+        viewModel.didPullToRefresh()
     }
     
     func bind(to viewModel: HomeViewModel) {
-        viewModel.sections.observe(on: self) { [weak self] sections in
-            self?.sections = sections
-            self?.collectionView.reloadData()
+        viewModel.sections.observe(on: self) { [weak self] _ in
+            guard let self else { return }
+            
+            guard !self.isLoading else { return }
+
+            self.collectionView.reloadData()
         }
-        
+
         viewModel.loading.observe(on: self) { [weak self] isLoading in
+            guard let self else { return }
+
+            self.isLoading = isLoading
+
             if isLoading {
-                self?.activityIndicator.startAnimating()
+                if !self.refreshControl.isRefreshing {
+                    self.collectionView.showAnimatedGradientSkeleton()
+                }
             } else {
-                self?.activityIndicator.stopAnimating()
+                self.refreshControl.endRefreshing()
+
+                self.collectionView.hideSkeleton(
+                    reloadDataAfter: false,
+                    transition: .crossDissolve(0.25)
+                )
+
+                self.collectionView.reloadData()
             }
         }
-        
+
         viewModel.error.observe(on: self) { [weak self] error in
             guard !error.isEmpty else { return }
             self?.showError(message: error)
@@ -91,17 +109,24 @@ private extension HomeViewController {
 }
 // MARK: - UICollectionViewDataSource
 
-extension HomeViewController: UICollectionViewDataSource {
+extension HomeViewController: SkeletonCollectionViewDataSource  {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        viewModel.sections.value.count
     }
     
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        return min(sections[section].movies.count, 3)
+        guard viewModel.sections.value.indices.contains(section) else {
+            return 0
+        }
+
+        return min(
+            viewModel.sections.value[section].movies.count,
+            3
+        )
     }
     
     func collectionView(
@@ -114,15 +139,18 @@ extension HomeViewController: UICollectionViewDataSource {
         ) as? HomeMovieCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
+
+        let sections = viewModel.sections.value
+
+        guard sections.indices.contains(indexPath.section),
+              sections[indexPath.section].movies.indices.contains(indexPath.item) else {
+            return cell
+        }
+
         let movie = sections[indexPath.section].movies[indexPath.item]
-        let cellViewModel = HomeMovieCellViewModel(
-            title: movie.title,
-            rating: String(format: "%.1f", movie.rating),
-               posterPath: movie.posterPath
-           )
+
         cell.configure(
-            with: cellViewModel,
+            with: movie,
             posterImagesRepository: posterImagesRepository
         )
         
@@ -141,9 +169,55 @@ extension HomeViewController: UICollectionViewDataSource {
               ) as? HomeSectionHeaderView else {
             return UICollectionReusableView()
         }
-        
-        header.configure(title: sections[indexPath.section].title)
+
+        if isLoading {
+            header.showLoadingState()
+            return header
+        }
+
+        let sections = viewModel.sections.value
+
+        guard sections.indices.contains(indexPath.section) else {
+            return header
+        }
+
+        header.configure(
+            title: sections[indexPath.section].title,
+            onSeeAllTapped: { [weak self] in
+                self?.viewModel.didTapSeeAll(
+                    sectionIndex: indexPath.section
+                )
+            }
+        )
+
         return header
+    }
+    func numSections(
+        in collectionSkeletonView: UICollectionView
+    ) -> Int {
+        return 4
+    }
+
+    func collectionSkeletonView(
+        _ skeletonView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        return 3
+    }
+
+    func collectionSkeletonView(
+        _ skeletonView: UICollectionView,
+        cellIdentifierForItemAt indexPath: IndexPath
+    ) -> ReusableCellIdentifier {
+        return HomeMovieCollectionViewCell.reuseIdentifier
+    }
+
+    func collectionSkeletonView(
+        _ skeletonView: UICollectionView,
+        supplementaryViewIdentifierOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> ReusableCellIdentifier? {
+        return nil
     }
 }
 
@@ -155,6 +229,8 @@ extension HomeViewController: UICollectionViewDelegate {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
+        guard !isLoading else { return }
+
         viewModel.didSelectMovie(
             sectionIndex: indexPath.section,
             movieIndex: indexPath.item

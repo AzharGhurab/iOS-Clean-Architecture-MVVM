@@ -75,4 +75,16 @@ final class MoviesListItemCell: UITableViewCell {
         
         return imageView
     }()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        imageLoadTask?.cancel()
+        imageLoadTask = nil
+
+        posterImageView.image = nil
+        titleLabel.text = nil
+        dateLabel.text = nil
+        ratingLabel.text = nil
+        overviewLabel.text = nil
+    }
 }

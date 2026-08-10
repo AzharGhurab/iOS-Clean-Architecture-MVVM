@@ -183,6 +183,14 @@
 		56B631692FAA27E100046E63 /* Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B631672FAA27DA00046E63 /* Genre.swift */; };
 		56B6316B2FAA287100046E63 /* GenresResponseDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B6316A2FAA286A00046E63 /* GenresResponseDTO.swift */; };
 		56B6316D2FAB3F7E00046E63 /* GenreCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B6316C2FAB3F7A00046E63 /* GenreCell.swift */; };
+		56BF669F3021CBCA00AA5896 /* FetchSeeAllMoviesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BF669E3021CBC200AA5896 /* FetchSeeAllMoviesUseCase.swift */; };
+		56BF66A03021CBCA00AA5896 /* FetchSeeAllMoviesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BF669E3021CBC200AA5896 /* FetchSeeAllMoviesUseCase.swift */; };
+		56BF66A23021DBDF00AA5896 /* GenreCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56BF66A13021DBDF00AA5896 /* GenreCell.xib */; };
+		56BF66A430220E3700AA5896 /* MoviesListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56BF66A330220E3700AA5896 /* MoviesListItemCell.xib */; };
+		56BF67163023581900AA5896 /* CategoryFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BF67153023581200AA5896 /* CategoryFilterView.swift */; };
+		56BF67183023719100AA5896 /* CategoryFilterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56BF67173023719100AA5896 /* CategoryFilterView.xib */; };
+		56BF6741302375FB00AA5896 /* HomeSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56BF6738302375FB00AA5896 /* HomeSectionType.swift */; };
+		56BF6788302466B300AA5896 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 56BF6787302466B300AA5896 /* SkeletonView */; };
 		56DF5074301AA28900ECD50B /* FetchPopularMoviesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56DF5073301AA28400ECD50B /* FetchPopularMoviesUseCase.swift */; };
 		56DF5075301AA28900ECD50B /* FetchPopularMoviesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56DF5073301AA28400ECD50B /* FetchPopularMoviesUseCase.swift */; };
 		56FA11352FD54B90004861EC /* MovieDetailsRepository .swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FA11342FD54B88004861EC /* MovieDetailsRepository .swift */; };
@@ -359,6 +367,12 @@
 		56B631672FAA27DA00046E63 /* Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
 		56B6316A2FAA286A00046E63 /* GenresResponseDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresResponseDTO.swift; sourceTree = "<group>"; };
 		56B6316C2FAB3F7A00046E63 /* GenreCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenreCell.swift; sourceTree = "<group>"; };
+		56BF669E3021CBC200AA5896 /* FetchSeeAllMoviesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSeeAllMoviesUseCase.swift; sourceTree = "<group>"; };
+		56BF66A13021DBDF00AA5896 /* GenreCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GenreCell.xib; sourceTree = "<group>"; };
+		56BF66A330220E3700AA5896 /* MoviesListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MoviesListItemCell.xib; sourceTree = "<group>"; };
+		56BF67153023581200AA5896 /* CategoryFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterView.swift; sourceTree = "<group>"; };
+		56BF67173023719100AA5896 /* CategoryFilterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryFilterView.xib; sourceTree = "<group>"; };
+		56BF6738302375FB00AA5896 /* HomeSectionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSectionType.swift; sourceTree = "<group>"; };
 		56DF5073301AA28400ECD50B /* FetchPopularMoviesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchPopularMoviesUseCase.swift; sourceTree = "<group>"; };
 		56FA11342FD54B88004861EC /* MovieDetailsRepository .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MovieDetailsRepository .swift"; sourceTree = "<group>"; };
 		56FA11372FD5659A004861EC /* GenresRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresRepository.swift; sourceTree = "<group>"; };
@@ -387,14 +401,14 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		564EB4442FF1B8B2005ACA43 /* Lists */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Lists; sourceTree = "<group>"; };
 		564EB44F2FF256BC005ACA43 /* CreateList */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CreateList; sourceTree = "<group>"; };
-		564EB45C2FF2F624005ACA43 /* ViewModel */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModel; sourceTree = "<group>"; };
-		564EB4602FF2F64E005ACA43 /* View */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = View; sourceTree = "<group>"; };
-		564EB4612FF3B028005ACA43 /* Flows */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Flows; sourceTree = "<group>"; };
 		564EB47F2FF3F604005ACA43 /* MovieSelection */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MovieSelection; sourceTree = "<group>"; };
 		564EB4C72FF50AC9005ACA43 /* Flows */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Flows; sourceTree = "<group>"; };
 		564EB53A2FF6DD18005ACA43 /* DeleteListConfirmation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DeleteListConfirmation; sourceTree = "<group>"; };
 		5677651B2FDFE68A00E6B1FE /* AuthScene */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = AuthScene; sourceTree = "<group>"; };
 		56A15CF9301E851500CA406B /*  KeychainStorage */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (56A15CFA301E851E00CA406B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = " KeychainStorage"; sourceTree = "<group>"; };
+		56BF66443020BF0100AA5896 /* Home */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Home; sourceTree = "<group>"; };
+		56BF66453020BF1000AA5896 /* Search */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Search; sourceTree = "<group>"; };
+		56BF66463020BF1B00AA5896 /* Profile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Profile; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -409,6 +423,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				56BF6788302466B300AA5896 /* SkeletonView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,6 +650,7 @@
 				1FA5338B201E1FDE00747E55 /* ExampleMVVM */,
 				1FA533A0201E1FDE00747E55 /* ExampleMVVMTests */,
 				1F02DE3322F8507500E40C3A /* ExampleMVVMUITests */,
+				56BF6786302466B200AA5896 /* Frameworks */,
 				1FA5338A201E1FDE00747E55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -701,6 +717,7 @@
 		1FA533D2201EF21000747E55 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				56BF6738302375FB00AA5896 /* HomeSectionType.swift */,
 				561A5C983015F72900FB0519 /* MovieAccountStates.swift */,
 				564EB5322FF68688005ACA43 /* Account.swift */,
 				564EB5262FF61CEC005ACA43 /* MovieSelectionMovie.swift */,
@@ -728,6 +745,7 @@
 		1FA533D8201EF2F100747E55 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
+				56BF669E3021CBC200AA5896 /* FetchSeeAllMoviesUseCase.swift */,
 				561A5C9B3015F9C500FB0519 /* FetchMovieAccountStatesUseCase.swift */,
 				561A5C75300E3B7F00FB0519 /* MarkAsWatchlistUseCase.swift */,
 				561A5C72300E3B6200FB0519 /* MarkAsFavoriteUseCase.swift */,
@@ -849,6 +867,7 @@
 		1FE49D72230AA7C200D1D42E /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				56BF66A330220E3700AA5896 /* MoviesListItemCell.xib */,
 				1FE49D73230AA7C200D1D42E /* MoviesListItemCell.swift */,
 			);
 			path = Cells;
@@ -967,7 +986,10 @@
 		1FE49D99230AEB4000D1D42E /* View */ = {
 			isa = PBXGroup;
 			children = (
+				56BF67153023581200AA5896 /* CategoryFilterView.swift */,
+				56BF67173023719100AA5896 /* CategoryFilterView.xib */,
 				56B6316C2FAB3F7A00046E63 /* GenreCell.swift */,
+				56BF66A13021DBDF00AA5896 /* GenreCell.xib */,
 				1FE49D75230AA7C200D1D42E /* MoviesListViewController.swift */,
 				1FE49D70230AA7C200D1D42E /* MoviesListViewController.storyboard */,
 				1FE49D71230AA7C200D1D42E /* MoviesListTableView */,
@@ -1063,6 +1085,13 @@
 			path = Repositories;
 			sourceTree = "<group>";
 		};
+		56BF6786302466B200AA5896 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		6C0F72E729CF14CD0005020A /* Stubs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1074,9 +1103,9 @@
 		CA40345A2FA7071200B54677 /* MainTabBar */ = {
 			isa = PBXGroup;
 			children = (
-				564EB4612FF3B028005ACA43 /* Flows */,
-				564EB45C2FF2F624005ACA43 /* ViewModel */,
-				564EB4602FF2F64E005ACA43 /* View */,
+				56BF66443020BF0100AA5896 /* Home */,
+				56BF66453020BF1000AA5896 /* Search */,
+				56BF66463020BF1B00AA5896 /* Profile */,
 			);
 			path = MainTabBar;
 			sourceTree = "<group>";
@@ -1128,14 +1157,14 @@
 			fileSystemSynchronizedGroups = (
 				564EB4442FF1B8B2005ACA43 /* Lists */,
 				564EB44F2FF256BC005ACA43 /* CreateList */,
-				564EB45C2FF2F624005ACA43 /* ViewModel */,
-				564EB4602FF2F64E005ACA43 /* View */,
-				564EB4612FF3B028005ACA43 /* Flows */,
 				564EB47F2FF3F604005ACA43 /* MovieSelection */,
 				564EB4C72FF50AC9005ACA43 /* Flows */,
 				564EB53A2FF6DD18005ACA43 /* DeleteListConfirmation */,
 				5677651B2FDFE68A00E6B1FE /* AuthScene */,
 				56A15CF9301E851500CA406B /*  KeychainStorage */,
+				56BF66443020BF0100AA5896 /* Home */,
+				56BF66453020BF1000AA5896 /* Search */,
+				56BF66463020BF1B00AA5896 /* Profile */,
 			);
 			name = ExampleMVVM;
 			productName = CodeChallenge;
@@ -1196,6 +1225,9 @@
 				es,
 			);
 			mainGroup = 1FA53380201E1FDE00747E55;
+			packageReferences = (
+				56BF6785302464DE00AA5896 /* XCRemoteSwiftPackageReference "SkeletonView" */,
+			);
 			productRefGroup = 1FA5338A201E1FDE00747E55 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1222,12 +1254,15 @@
 			files = (
 				1FE49D89230AA7C200D1D42E /* MoviesListViewController.storyboard in Resources */,
 				564EB5432FF9A110005ACA43 /* SelectListViewController.xib in Resources */,
+				56BF66A23021DBDF00AA5896 /* GenreCell.xib in Resources */,
 				1FF082B3239438DC00876A22 /* Localizable.strings in Resources */,
 				1FA53397201E1FDE00747E55 /* LaunchScreen.storyboard in Resources */,
 				1FE49D88230AA7C200D1D42E /* MovieDetailsViewController.storyboard in Resources */,
+				56BF66A430220E3700AA5896 /* MoviesListItemCell.xib in Resources */,
 				564EB5452FF9B290005ACA43 /* SelectListTableViewCell.xib in Resources */,
 				1FA53394201E1FDE00747E55 /* Assets.xcassets in Resources */,
 				1FE49D86230AA7C200D1D42E /* MoviesQueriesTableViewController.storyboard in Resources */,
+				56BF67183023719100AA5896 /* CategoryFilterView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1315,6 +1350,8 @@
 				1F05A6CC2220A2CB001E2801 /* SearchMoviesUseCase.swift in Sources */,
 				1FA533D7201EF2B500747E55 /* AppDIContainer.swift in Sources */,
 				564EB4D32FF526E5005ACA43 /* ListDetailsResponseDTO.swift in Sources */,
+				56BF6741302375FB00AA5896 /* HomeSectionType.swift in Sources */,
+				56BF669F3021CBCA00AA5896 /* FetchSeeAllMoviesUseCase.swift in Sources */,
 				1F6B521323630016002FCDE9 /* RepositoryTask.swift in Sources */,
 				1F9034DF2307464700DEA4BD /* MoviesQueriesStorage.swift in Sources */,
 				1FE49D8A230AA7C200D1D42E /* MoviesListItemCell.swift in Sources */,
@@ -1329,6 +1366,7 @@
 				1FC5B7D0242634EB0086FA8C /* UIImageView+ImageSizeAfterAspectFit.swift in Sources */,
 				567765112FDFA45500E6B1FE /* AuthenticationRepository.swift in Sources */,
 				564EB4432FF141A2005ACA43 /* FetchListsUseCase.swift in Sources */,
+				56BF67163023581900AA5896 /* CategoryFilterView.swift in Sources */,
 				1FE49D8C230AA7C200D1D42E /* MoviesListViewController.swift in Sources */,
 				1FC5B7D2242635CC0086FA8C /* CGSize+ScaledSize.swift in Sources */,
 				561A5C993015F73000FB0519 /* MovieAccountStates.swift in Sources */,
@@ -1413,6 +1451,7 @@
 				1F474F2B22356C7F0092DB4B /* MovieQuery.swift in Sources */,
 				1F4102F5240BEE6A00EC014A /* UseCase.swift in Sources */,
 				1F474F2D22356C7F0092DB4B /* SearchMoviesUseCase.swift in Sources */,
+				56BF66A03021CBCA00AA5896 /* FetchSeeAllMoviesUseCase.swift in Sources */,
 				567765172FDFADB300E6B1FE /* CreateRequestTokenUseCase.swift in Sources */,
 				1F9034C52306FF2D00DEA4BD /* NetworkService.swift in Sources */,
 				564EB4D52FF52B85005ACA43 /* FetchListDetailsUseCase.swift in Sources */,
@@ -1786,6 +1825,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		56BF6785302464DE00AA5896 /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.31.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		56BF6787302466B300AA5896 /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 56BF6785302464DE00AA5896 /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		1FD03804239098650016D05F /* CoreDataStorage.xcdatamodeld */ = {

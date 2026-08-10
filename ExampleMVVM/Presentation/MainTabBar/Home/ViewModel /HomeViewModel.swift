@@ -14,17 +14,21 @@ struct HomeMovieCellViewModel {
 }
 
 struct HomeSectionViewModel {
+    let type: HomeSectionType
     let title: String
     let movies: [HomeMovieCellViewModel]
 }
 
 struct HomeViewModelActions {
     let showMovieDetails: (Movie) -> Void
+    let showSeeAll: (HomeSectionType) -> Void
 }
 
 protocol HomeViewModelInput {
     func viewDidLoad()
+    func didPullToRefresh()
     func didSelectMovie(sectionIndex: Int, movieIndex: Int)
+    func didTapSeeAll(sectionIndex: Int)
 }
 
 protocol HomeViewModelOutput {
@@ -62,6 +66,9 @@ final class DefaultHomeViewModel: HomeViewModel {
     func viewDidLoad() {
         loadHomeMovies()
     }
+    func didPullToRefresh() {
+        loadHomeMovies()
+    }
     
     func didSelectMovie(sectionIndex: Int, movieIndex: Int) {
         guard movieSections.indices.contains(sectionIndex),
@@ -71,6 +78,15 @@ final class DefaultHomeViewModel: HomeViewModel {
         
         let movie = movieSections[sectionIndex][movieIndex]
         actions?.showMovieDetails(movie)
+    }
+    
+    func didTapSeeAll(sectionIndex: Int) {
+        guard sections.value.indices.contains(sectionIndex) else {
+            return
+        }
+
+        let sectionType = sections.value[sectionIndex].type
+        actions?.showSeeAll(sectionType)
     }
 }
 
@@ -84,40 +100,52 @@ private extension DefaultHomeViewModel {
         loadTask = fetchHomeMoviesUseCase.execute { [weak self] result in
             self?.mainQueue.async {
                 guard let self = self else { return }
-                self.loading.value = false
                 
                 switch result {
                 case .success(let homeMovies):
-                    
-                    self.movieSections = [
-                        homeMovies.nowPlaying,
-                        homeMovies.popular,
-                        homeMovies.topRated,
-                        homeMovies.upcoming
-                    ]
-                    
-                    self.sections.value = [
-                        HomeSectionViewModel(
-                            title: NSLocalizedString("Now Playing", comment: ""),
-                            movies: homeMovies.nowPlaying.map { HomeMovieCellViewModel(movie: $0) }
-                        ),
-                        HomeSectionViewModel(
-                            title: NSLocalizedString("Popular", comment: ""),
-                            movies: homeMovies.popular.map { HomeMovieCellViewModel(movie: $0) }
-                        ),
-                        HomeSectionViewModel(
-                            title: NSLocalizedString("Top Rated", comment: ""),
-                            movies: homeMovies.topRated.map { HomeMovieCellViewModel(movie: $0) }
-                        ),
-                        HomeSectionViewModel(
-                            title: NSLocalizedString("Upcoming", comment: ""),
-                            movies: homeMovies.upcoming.map { HomeMovieCellViewModel(movie: $0) }
-                        )
-                    ]
+                        self.movieSections = [
+                            homeMovies.nowPlaying,
+                            homeMovies.popular,
+                            homeMovies.topRated,
+                            homeMovies.upcoming
+                        ]
+                        
+                        self.sections.value = [
+                            HomeSectionViewModel(
+                                type: .nowPlaying,
+                                title: NSLocalizedString("Now Playing", comment: ""),
+                                movies: homeMovies.nowPlaying.map {
+                                    HomeMovieCellViewModel(movie: $0)
+                                }
+                            ),
+                            HomeSectionViewModel(
+                                type: .popular,
+                                title: NSLocalizedString("Popular", comment: ""),
+                                movies: homeMovies.popular.map {
+                                    HomeMovieCellViewModel(movie: $0)
+                                }
+                            ),
+                            HomeSectionViewModel(
+                                type: .topRated,
+                                title: NSLocalizedString("Top Rated", comment: ""),
+                                movies: homeMovies.topRated.map {
+                                    HomeMovieCellViewModel(movie: $0)
+                                }
+                            ),
+                            HomeSectionViewModel(
+                                type: .upcoming,
+                                title: NSLocalizedString("Upcoming", comment: ""),
+                                movies: homeMovies.upcoming.map {
+                                    HomeMovieCellViewModel(movie: $0)
+                                }
+                            )
+                        ]
+                        
                     
                 case .failure(let error):
                     self.handle(error: error)
                 }
+                self.loading.value = false
             }
         }
     }
