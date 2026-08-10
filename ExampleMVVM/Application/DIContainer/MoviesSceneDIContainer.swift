@@ -375,16 +375,51 @@ final class MoviesSceneDIContainer:
 
     // MARK: - Movie Details
 
-    func makeMoviesDetailsViewController(movie: Movie) -> UIViewController {
+    func makeMoviesDetailsViewController(
+        movie: Movie,
+        actions: MovieDetailsViewModelActions
+    ) -> UIViewController {
         MovieDetailsViewController.create(
-            with: makeMoviesDetailsViewModel(movie: movie),
+            with: makeMoviesDetailsViewModel(
+                movie: movie,
+                actions: actions
+            ),
             makeSelectListViewController: {
                 self.makeSelectListViewController(movie: movie)
             }
         )
     }
     
-    func makeMoviesDetailsViewModel(movie: Movie) -> MovieDetailsViewModel {
+    func makeMoviesDetailsViewControllerSeeAll(
+        movie: Movie
+    ) -> UIViewController {
+        MovieDetailsViewController.create(
+            with: makeMoviesDetailsViewModel(
+                movie: movie,
+                actions: nil
+            ),
+            makeSelectListViewController: {
+                self.makeSelectListViewController(movie: movie)
+            }
+        )
+    }
+    func makeMoviesDetailsViewControllerHomeFlow(movie: Movie) -> UIViewController {
+        MovieDetailsViewController.create(
+            with: makeMoviesDetailsViewModel(
+                movie: movie,
+                actions: nil
+            ),
+            makeSelectListViewController: {
+                self.makeSelectListViewController(movie: movie)
+            }
+        )
+    }
+
+
+    func makeMoviesDetailsViewModel(
+        movie: Movie,
+        actions: MovieDetailsViewModelActions?
+    ) -> MovieDetailsViewModel {
         DefaultMovieDetailsViewModel(
             movie: movie,
             posterImagesRepository: makePosterImagesRepository(),
@@ -396,7 +431,9 @@ final class MoviesSceneDIContainer:
             fetchListDetailsUseCase: makeFetchListDetailsUseCase(),
             markAsFavoriteUseCase: markAsFavoriteUseCase,
             markAsWatchlistUseCase: markAsWatchlistUseCase,
-            fetchMovieAccountStatesUseCase: makeFetchMovieAccountStatesUseCase()
+            fetchMovieAccountStatesUseCase: makeFetchMovieAccountStatesUseCase(),
+            authenticationStorage: authenticationStorage,
+            actions: actions
         )
     }
     func makeSelectListViewModel(
@@ -440,10 +477,12 @@ final class MoviesSceneDIContainer:
         )
     }
     // MARK: - Flow Coordinators
-    func makeMoviesSearchFlowCoordinator(navigationController: UINavigationController) -> MoviesSearchFlowCoordinator {
+    func makeMoviesSearchFlowCoordinator(navigationController: UINavigationController,onShowLogin: @escaping () -> Void
+    ) -> MoviesSearchFlowCoordinator {
         MoviesSearchFlowCoordinator(
             navigationController: navigationController,
-            dependencies: self
+            dependencies: self,
+            onShowLogin: onShowLogin
         )
     }
 

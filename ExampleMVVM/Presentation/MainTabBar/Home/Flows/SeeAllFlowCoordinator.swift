@@ -14,7 +14,7 @@ protocol SeeAllFlowCoordinatorDependencies {
         section: HomeSectionType
     ) -> SeeAllViewController
 
-    func makeMoviesDetailsViewController(
+    func makeMoviesDetailsViewControllerSeeAll(
         movie: Movie
     ) -> UIViewController
 }
@@ -52,7 +52,7 @@ final class SeeAllFlowCoordinator {
     }
 
     private func showMovieDetails(movie: Movie) {
-        let viewController = dependencies.makeMoviesDetailsViewController(
+        let viewController = dependencies.makeMoviesDetailsViewControllerSeeAll(
             movie: movie
         )
 
