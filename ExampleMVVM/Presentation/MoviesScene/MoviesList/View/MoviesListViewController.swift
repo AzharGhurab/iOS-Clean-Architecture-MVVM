@@ -72,9 +72,14 @@ final class MoviesListViewController: UIViewController, StoryboardInstantiable, 
     }
 
     private func updateItems() {
-        moviesTableViewController?.reload()
-        suggestionsListContainer.isHidden = true
-    }
+           moviesTableViewController?.reload()
+           suggestionsListContainer.isHidden = true
+
+           if !viewModel.isEmpty {
+               moviesListContainer.isHidden = false
+               emptyDataLabel.isHidden = true
+           }
+       }
 
     private func updateLoading(_ loading: MoviesListViewModelLoading?) {
         emptyDataLabel.isHidden = true
@@ -207,6 +212,7 @@ extension MoviesListViewController: UISearchBarDelegate {
               selectedGenreIndex = 0
               genresCollectionView.reloadData()
           viewModel.didCancelSearch()
+        categoryFilterView.selectCategory(.movies)
       }
   }
 

@@ -89,4 +89,13 @@ final class CategoryFilterView: UIView {
             self.contentView.layoutIfNeeded()
         }
     }
+    func selectCategory(
+        _ category: SearchCategory,
+        animated: Bool = false
+    ) {
+        showSelectedCategory(
+            category,
+            animated: animated
+        )
+    }
 }
