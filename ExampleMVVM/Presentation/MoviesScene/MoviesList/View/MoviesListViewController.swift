@@ -213,6 +213,7 @@ extension MoviesListViewController: UISearchBarDelegate {
               genresCollectionView.reloadData()
           viewModel.didCancelSearch()
         categoryFilterView.selectCategory(.movies)
+        genresCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.left, animated: true)
       }
   }
 
