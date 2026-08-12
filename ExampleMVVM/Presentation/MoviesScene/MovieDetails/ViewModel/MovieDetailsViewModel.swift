@@ -1,5 +1,8 @@
 import Foundation
 
+struct MovieDetailsViewModelActions {
+    let showLogin: () -> Void
+}
 protocol MovieDetailsViewModelInput {
     func updatePosterImage(width: Int)
     func toggleFavorite()
@@ -45,6 +48,8 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
     private let markAsFavoriteUseCase: MarkAsFavoriteUseCase
     private let markAsWatchlistUseCase: MarkAsWatchlistUseCase
     private let fetchMovieAccountStatesUseCase: FetchMovieAccountStatesUseCase
+    private let authenticationStorage: AuthenticationStorage
+    private let actions: MovieDetailsViewModelActions?
     
     private var addToListTask: Cancellable? {
         willSet {
@@ -123,6 +128,8 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         markAsFavoriteUseCase: MarkAsFavoriteUseCase,
         markAsWatchlistUseCase: MarkAsWatchlistUseCase,
         fetchMovieAccountStatesUseCase: FetchMovieAccountStatesUseCase,
+        authenticationStorage: AuthenticationStorage,
+        actions: MovieDetailsViewModelActions?,
         mainQueue: DispatchQueueType = DispatchQueue.main
     ) {
         self.movieId = movie.id
@@ -140,6 +147,8 @@ final class DefaultMovieDetailsViewModel: MovieDetailsViewModel {
         self.markAsFavoriteUseCase = markAsFavoriteUseCase
         self.markAsWatchlistUseCase = markAsWatchlistUseCase
         self.fetchMovieAccountStatesUseCase = fetchMovieAccountStatesUseCase
+        self.authenticationStorage = authenticationStorage
+        self.actions = actions
         self.mainQueue = mainQueue
         self.rating = String(format: "%.1f", movie.rating ?? 0)
 
@@ -175,6 +184,11 @@ extension DefaultMovieDetailsViewModel {
         }
     }
     func toggleFavorite() {
+        guard authenticationStorage.sessionId() != nil else {
+             actions?.showLogin()
+             return
+         }
+
         let newFavoriteStatus = !isFavorite.value
 
         favoriteTask = fetchAccountUseCase.execute { [weak self] result in
@@ -227,6 +241,11 @@ extension DefaultMovieDetailsViewModel {
     }
 
     func toggleWatchlist() {
+        
+        guard authenticationStorage.sessionId() != nil else {
+            actions?.showLogin()
+            return
+        }
         let newWatchlistStatus = !isInWatchlist.value
 
         watchlistTask = fetchAccountUseCase.execute { [weak self] result in

@@ -44,7 +44,7 @@ final class AuthFlowCoordinator {
         }
     }
 
-    private func showLogin() {
+    func showLogin() {
         profileFlowCoordinator = nil
         let actions = LoginViewModelActions(
             showProfile: { [weak self] in

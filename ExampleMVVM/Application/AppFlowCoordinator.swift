@@ -36,8 +36,10 @@ final class AppFlowCoordinator {
             selectedImage: UIImage(named: "magnifyingglass")
         )
         let flow = moviesSceneDIContainer.makeMoviesSearchFlowCoordinator(
-            navigationController: searchNavigationController
-        )
+            navigationController: searchNavigationController) {[weak self, weak tabBarController] in
+                    tabBarController?.selectedIndex = 2
+                    self?.authFlow?.showLogin()
+            }
         flow.start()
         let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
         authFlow = moviesSceneDIContainer.makeAuthFlowCoordinator(

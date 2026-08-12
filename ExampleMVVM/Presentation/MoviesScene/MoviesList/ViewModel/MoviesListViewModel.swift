@@ -120,6 +120,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         currentPage = 0
         totalPageCount = 1
         pages.removeAll()
+        allMovies.removeAll()
         displayedMovies.removeAll()
         items.value.removeAll()
     }
@@ -176,6 +177,9 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
 
         isSearching = false
         query.value = ""
+        
+        selectedCategory = .movies
+        selectedGenreId = nil
 
         resetPages()
         loadPopularMedia(loading: .fullScreen)
