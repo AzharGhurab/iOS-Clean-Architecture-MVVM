@@ -45,7 +45,7 @@ final class DefaultFetchHomeMoviesUseCase: FetchHomeMoviesUseCase {
         }
         
         dispatchGroup.enter()
-        let popularTask = moviesRepository.fetchPopularMovies(page: 1) { result in
+        let popularTask = moviesRepository.fetchPopularMedia(category: .movies,page: 1) { result in
             popularResult = result
             dispatchGroup.leave()
         }

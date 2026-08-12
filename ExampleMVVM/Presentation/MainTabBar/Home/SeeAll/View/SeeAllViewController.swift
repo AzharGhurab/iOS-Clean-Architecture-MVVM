@@ -14,6 +14,7 @@ final class SeeAllViewController: UIViewController {
 
     private var selectedGenreIndex = 0
     private var nextPageLoadingSpinner: UIActivityIndicatorView?
+    private var canLoadNextPageFromUserScroll = false
 
     private let genresCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -279,10 +280,6 @@ extension SeeAllViewController: UITableViewDataSource {
             posterImagesRepository: posterImagesRepository
         )
 
-        if indexPath.row == viewModel.items.value.count - 1 {
-            viewModel.didLoadNextPage()
-        }
-
         return cell
     }
 }
@@ -310,6 +307,32 @@ extension SeeAllViewController: UITableViewDelegate {
         )
 
         viewModel.didSelectItem(at: indexPath.row)
+    }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        canLoadNextPageFromUserScroll = true
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard canLoadNextPageFromUserScroll else {
+            return
+        }
+
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.height
+
+        guard contentHeight > frameHeight else {
+            return
+        }
+
+        let threshold: CGFloat = 100
+
+        guard offsetY + frameHeight >= contentHeight - threshold else {
+            return
+        }
+
+        canLoadNextPageFromUserScroll = false
+        viewModel.didLoadNextPage()
     }
 }
 

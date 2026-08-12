@@ -7,6 +7,7 @@ final class MoviesListTableViewController: UITableViewController {
     var posterImagesRepository: PosterImagesRepository?
     var nextPageLoadingSpinner: UIActivityIndicatorView?
     var emptyDataLabel: UILabel?
+    private var canLoadNextPageFromUserScroll = false
 
     // MARK: - Lifecycle
 
@@ -74,10 +75,6 @@ extension MoviesListTableViewController {
         cell.fill(with: viewModel.items.value[indexPath.row],
                   posterImagesRepository: posterImagesRepository)
 
-        if indexPath.row == viewModel.items.value.count - 1 {
-            viewModel.didLoadNextPage()
-        }
-
         return cell
     }
 
@@ -89,5 +86,30 @@ extension MoviesListTableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.didSelectItem(at: indexPath.row)
+    }
+    override func scrollViewWillBeginDragging(_ scrollView: UIScrollView
+    ) {
+        canLoadNextPageFromUserScroll = true
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard canLoadNextPageFromUserScroll else {
+            return
+        }
+
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.height
+
+        guard contentHeight > 0 else {
+            return
+        }
+
+        let threshold: CGFloat = 100
+
+        if offsetY + frameHeight >= contentHeight - threshold {
+            canLoadNextPageFromUserScroll = false
+            viewModel.didLoadNextPage()
+        }
     }
 }

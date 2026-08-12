@@ -30,6 +30,7 @@ final class DefaultSearchMoviesUseCase: SearchMoviesUseCase {
 
         return moviesRepository.fetchMoviesList(
             query: requestValue.query,
+            category: requestValue.category,
             page: requestValue.page,
             cached: cached,
             completion: { result in
@@ -45,5 +46,6 @@ final class DefaultSearchMoviesUseCase: SearchMoviesUseCase {
 
 struct SearchMoviesUseCaseRequestValue {
     let query: MovieQuery
+    let category: SearchCategory
     let page: Int
 }

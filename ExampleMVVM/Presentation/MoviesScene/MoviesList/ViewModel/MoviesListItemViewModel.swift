@@ -12,18 +12,25 @@ struct MoviesListItemViewModel: Equatable {
 
 extension MoviesListItemViewModel {
 
-    init(movie: Movie) {
+    init(movie: Movie,category: SearchCategory) {
         self.title = movie.title ?? ""
         self.posterImagePath = movie.posterPath
         self.overview = movie.overview ?? ""
         self.rating = String(format: "%.1f", movie.rating ?? 0)
-        if let releaseDate = movie.releaseDate {
-               let year = Calendar.current.component(.year, from: releaseDate)
-            let type = movie.mediaType == "tv" ? "TV Show" : "Movie"
-            self.releaseDate = "\(year) • \(type)"
-           } else {
-               self.releaseDate = "Movie"
-           }
+        let type = category == .tvShows
+                    ? "TV Show"
+                    : "Movie"
+
+                if let releaseDate = movie.releaseDate {
+                    let year = Calendar.current.component(
+                        .year,
+                        from: releaseDate
+                    )
+
+                    self.releaseDate = "\(year) • \(type)"
+                } else {
+                    self.releaseDate = type
+                }
     }
 }
 

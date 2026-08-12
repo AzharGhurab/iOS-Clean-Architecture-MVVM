@@ -44,6 +44,8 @@ final class DefaultSeeAllViewModel: SeeAllViewModel {
     private let fetchGenresUseCase: FetchGenresUseCase
     private let actions: SeeAllViewModelActions?
     private let mainQueue: DispatchQueueType
+    private var automaticFilteredPagesLoaded = 0
+    private let maxAutomaticFilteredPages = 3
     // MARK: - State
 
     private var pages: [MoviesPage] = []
@@ -167,6 +169,8 @@ extension DefaultSeeAllViewModel {
     }
 
     func didSelectGenre(at index: Int) {
+        automaticFilteredPagesLoaded = 0
+
         if index == 0 {
             selectedGenreId = nil
             displayedMovies = allMovies
@@ -193,6 +197,19 @@ extension DefaultSeeAllViewModel {
 
         let movie = displayedMovies[index]
         actions?.showMovieDetails(movie)
+    }
+    private func loadNextFilteredPageIfNeeded() {
+        guard selectedGenreId != nil,
+              displayedMovies.isEmpty,
+              hasMorePages,
+              automaticFilteredPagesLoaded < maxAutomaticFilteredPages,
+              loading.value == nil
+        else {
+            return
+        }
+
+        automaticFilteredPagesLoaded += 1
+        didLoadNextPage()
     }
 }
 
@@ -228,6 +245,7 @@ private extension DefaultSeeAllViewModel {
                     }
 
                     self.loading.value = nil
+                    self.loadNextFilteredPageIfNeeded()
                 }
             }
     }
@@ -281,17 +299,22 @@ private extension DefaultSeeAllViewModel {
         }
 
         updateItems()
+        loadNextFilteredPageIfNeeded()
     }
 
     func updateItems() {
-        items.value = displayedMovies.map(
-            MoviesListItemViewModel.init
-        )
+        items.value = displayedMovies.map {
+            MoviesListItemViewModel(
+                movie: $0,
+                category: .movies
+            )
+        }
     }
 
     func resetPages() {
         currentPage = 0
         totalPageCount = 1
+        automaticFilteredPagesLoaded = 0
 
         pages.removeAll()
         allMovies.removeAll()

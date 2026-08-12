@@ -58,6 +58,8 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     let genres: Observable<[Genre]> = Observable([])
     var currentPage: Int = 0
     var totalPageCount: Int = 1
+    private var automaticFilteredPagesLoaded = 0
+    private let maxAutomaticFilteredPages = 3
     var hasMorePages: Bool { currentPage < totalPageCount }
     var nextPage: Int { hasMorePages ? currentPage + 1 : currentPage }
     
@@ -127,7 +129,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         query.value = movieQuery.query
         
         moviesLoadTask = searchMoviesUseCase.execute(
-            requestValue: .init(query: movieQuery, page: nextPage),
+        requestValue: .init(query: movieQuery,category: selectedCategory,page: nextPage),
             cached: { [weak self] page in
                 self?.mainQueue.async {
                     self?.appendPage(page)
@@ -142,16 +144,18 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
                         self?.handle(error: error)
                     }
                     self?.loading.value = .none
+                    self?.loadNextFilteredPageIfNeeded()
                 }
             })
     }
     
-    private func loadPopularMovies(
+    private func loadPopularMedia(
         loading: MoviesListViewModelLoading
     ) {
         self.loading.value = loading
 
         moviesLoadTask = fetchPopularMoviesUseCase.execute(
+            category: selectedCategory,
             page: nextPage
         ) { [weak self] result in
             self?.mainQueue.async {
@@ -174,7 +178,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
         query.value = ""
 
         resetPages()
-        loadPopularMovies(loading: .fullScreen)
+        loadPopularMedia(loading: .fullScreen)
     }
     
     private func handle(error: Error) {
@@ -185,6 +189,7 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
     
     private func update(movieQuery: MovieQuery,isSearching: Bool) {
         self.isSearching = isSearching
+        automaticFilteredPagesLoaded = 0
         resetPages()
         load(movieQuery: movieQuery, loading: .fullScreen)
     }
@@ -213,27 +218,34 @@ final class DefaultMoviesListViewModel: MoviesListViewModel {
             ? allMovies
             : popularMovies
 
-        let categoryItems = sourceItems.filter { item in
-            switch selectedCategory {
-            case .movies:
-                return item.mediaType == "movie" || item.mediaType == nil
-
-            case .tvShows:
-                return item.mediaType == "tv"
-            }
-        }
-
         if let selectedGenreId {
-            displayedMovies = categoryItems.filter {
+            displayedMovies = sourceItems.filter {
                 $0.genreIds?.contains(selectedGenreId) ?? false
             }
         } else {
-            displayedMovies = categoryItems
+            displayedMovies = sourceItems
         }
 
-        items.value = displayedMovies.map(
-            MoviesListItemViewModel.init
-        )
+        items.value = displayedMovies.map {
+            MoviesListItemViewModel(
+                movie: $0,
+                category: selectedCategory
+            )
+        }
+        loadNextFilteredPageIfNeeded()
+    }
+    private func loadNextFilteredPageIfNeeded() {
+        guard selectedGenreId != nil,
+              displayedMovies.isEmpty,
+              hasMorePages,
+              automaticFilteredPagesLoaded < maxAutomaticFilteredPages,
+              loading.value == .none
+        else {
+            return
+        }
+
+        automaticFilteredPagesLoaded += 1
+        didLoadNextPage()
     }
 
     }
@@ -256,7 +268,7 @@ extension DefaultMoviesListViewModel {
                 loading: .nextPage
             )
         } else {
-            loadPopularMovies(loading: .nextPage)
+            loadPopularMedia(loading: .nextPage)
         }
     }
 
@@ -293,6 +305,7 @@ extension DefaultMoviesListViewModel {
         actions?.showMovieDetails(displayedMovies[index])
     }
     func didSelectGenre(at index: Int) {
+        automaticFilteredPagesLoaded = 0
         if index == 0 {
             selectedGenreId = nil
             applyCurrentFilters()
@@ -309,8 +322,13 @@ extension DefaultMoviesListViewModel {
         applyCurrentFilters()
     }
     func didSelectCategory(_ category: SearchCategory) {
+        guard selectedCategory != category else {
+            return
+        }
+
         selectedCategory = category
         selectedGenreId = nil
+        automaticFilteredPagesLoaded = 0
 
         switch category {
         case .movies:
@@ -320,7 +338,15 @@ extension DefaultMoviesListViewModel {
             genres.value = tvGenres
         }
 
-        applyCurrentFilters()
+        if isSearching {
+            update(
+                movieQuery: MovieQuery(query: query.value),
+                isSearching: true
+            )
+        } else {
+            resetPages()
+            loadPopularMedia(loading: .fullScreen)
+        }
     }
 }
 

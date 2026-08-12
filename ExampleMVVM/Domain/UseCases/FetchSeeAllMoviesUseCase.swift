@@ -35,7 +35,8 @@ final class DefaultFetchSeeAllMoviesUseCase: FetchSeeAllMoviesUseCase {
             )
 
         case .popular:
-            return moviesRepository.fetchPopularMovies(
+            return moviesRepository.fetchPopularMedia(
+                category: .movies,
                 page: requestValue.page,
                 completion: completion
             )

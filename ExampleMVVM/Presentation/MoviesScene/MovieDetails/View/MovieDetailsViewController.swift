@@ -12,6 +12,7 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     // MARK: - Lifecycle
 
     private var viewModel: MovieDetailsViewModel!
+    private var didRequestPosterImage = false
     var makeSelectListViewController: (() -> SelectListViewController)?
     
     static func create(
@@ -53,7 +54,21 @@ final class MovieDetailsViewController: UIViewController, StoryboardInstantiable
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        viewModel.updatePosterImage(width: Int(posterImageView.imageSizeAfterAspectFit.scaledSize.width))
+
+        guard !didRequestPosterImage else {
+            return
+        }
+
+        let width = Int(
+            posterImageView.imageSizeAfterAspectFit.scaledSize.width
+        )
+
+        guard width > 0 else {
+            return
+        }
+
+        didRequestPosterImage = true
+        viewModel.updatePosterImage(width: width)
     }
     
     // MARK: - Private

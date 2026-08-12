@@ -4,6 +4,7 @@ protocol MoviesRepository {
     @discardableResult
     func fetchMoviesList(
         query: MovieQuery,
+        category: SearchCategory,
         page: Int,
         cached: @escaping (MoviesPage) -> Void,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
@@ -15,7 +16,8 @@ protocol MoviesRepository {
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
 
-    func fetchPopularMovies(
+    func fetchPopularMedia(
+        category: SearchCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?

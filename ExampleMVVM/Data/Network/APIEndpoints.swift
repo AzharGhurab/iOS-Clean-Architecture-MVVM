@@ -10,10 +10,22 @@ struct APIEndpoints {
            static let requestToken = "request_token"
        }
     
-    static func getMovies(with moviesRequestDTO: MoviesRequestDTO) -> Endpoint<MoviesResponseDTO> {
+    static func searchMedia(category: SearchCategory,
+        with moviesRequestDTO: MoviesRequestDTO
+    ) -> Endpoint<MoviesResponseDTO> {
+
+        let path: String
+
+        switch category {
+        case .movies:
+            path = "3/search/movie"
+
+        case .tvShows:
+            path = "3/search/tv"
+        }
 
         return Endpoint(
-            path: "3/search/multi",
+            path: path,
             method: .get,
             queryParametersEncodable: moviesRequestDTO
         )
@@ -26,9 +38,20 @@ struct APIEndpoints {
         )
     }
 
-    static func getPopularMovies(with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+    static func getPopularMedia(category: SearchCategory,with moviesListRequestDTO: MoviesListRequestDTO) -> Endpoint<MoviesResponseDTO> {
+
+        let categoryPath: String
+
+        switch category {
+        case .movies:
+            categoryPath = "movie"
+
+        case .tvShows:
+            categoryPath = "tv"
+        }
+
         return Endpoint(
-            path: "3/movie/popular",
+            path: "3/\(categoryPath)/popular",
             method: .get,
             queryParametersEncodable: moviesListRequestDTO
         )

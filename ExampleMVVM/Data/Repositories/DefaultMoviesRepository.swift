@@ -23,6 +23,7 @@ extension DefaultMoviesRepository: MoviesRepository {
     
     func fetchMoviesList(
         query: MovieQuery,
+        category: SearchCategory,
         page: Int,
         cached: @escaping (MoviesPage) -> Void,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
@@ -39,7 +40,7 @@ extension DefaultMoviesRepository: MoviesRepository {
             
             guard !task.isCancelled else { return }
             
-            let endpoint = APIEndpoints.getMovies(with: requestDTO)
+            let endpoint = APIEndpoints.searchMedia( category: category,with: requestDTO)
             task.networkTask = self?.dataTransferService.request(
                 with: endpoint,
                 on: backgroundQueue
@@ -81,13 +82,19 @@ extension DefaultMoviesRepository: MoviesRepository {
         return task
     }
     
-    func fetchPopularMovies(
+    func fetchPopularMedia(
+        category: SearchCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
         
         let requestDTO = MoviesListRequestDTO(page: page)
-        let endpoint = APIEndpoints.getPopularMovies(with: requestDTO)
+
+        let endpoint = APIEndpoints.getPopularMedia(
+            category: category,
+            with: requestDTO
+        )
+
         let task = RepositoryTask()
         
         task.networkTask = dataTransferService.request(

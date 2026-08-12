@@ -11,6 +11,7 @@ protocol FetchPopularMoviesUseCase {
 
     @discardableResult
     func execute(
+        category: SearchCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable?
@@ -26,10 +27,13 @@ final class DefaultFetchPopularMoviesUseCase: FetchPopularMoviesUseCase {
 
     @discardableResult
     func execute(
+        category: SearchCategory,
         page: Int,
         completion: @escaping (Result<MoviesPage, Error>) -> Void
     ) -> Cancellable? {
-        return moviesRepository.fetchPopularMovies(
+
+        return moviesRepository.fetchPopularMedia(
+            category: category,
             page: page,
             completion: completion
         )
